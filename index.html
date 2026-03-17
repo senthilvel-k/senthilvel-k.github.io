@@ -4,779 +4,809 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Senthil Vel Kumaran — Embedded Systems Engineer</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@300;400;500&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:       #060a06;
-  --surface:  #0b120b;
-  --surface2: #101a10;
-  --border:   #1a2e1a;
-  --phosphor: #00ff41;
-  --phosphor2:#00cc33;
-  --phosphor3:#39ff14;
-  --amber:    #ffb300;
-  --red:      #ff3b30;
-  --cyan:     #00e5ff;
-  --text:     #c8e6c8;
-  --muted:    #4a7a4a;
-  --mono:     'IBM Plex Mono', monospace;
-  --sans:     'Syne', sans-serif;
+  --bg:        #f8f7f4;
+  --surface:   #ffffff;
+  --surface2:  #f2f0ec;
+  --border:    #e5e2db;
+  --border2:   #d4d0c8;
+  --text:      #1a1a1a;
+  --muted:     #6b6860;
+  --muted2:    #9a978f;
+  --accent:    #1a3a5c;
+  --accent-lt: #e8eef5;
+  --amber:     #b85c00;
+  --amber-lt:  #fef3e8;
+  --green:     #1a5c3a;
+  --green-lt:  #e8f5ee;
+  --serif:     'Lora', Georgia, serif;
+  --mono:      'DM Mono', monospace;
+  --sans:      'Manrope', sans-serif;
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-
 html { scroll-behavior: smooth; }
 
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: var(--mono);
-  font-size: 14px;
+  font-family: var(--sans);
+  font-weight: 400;
+  line-height: 1.6;
   overflow-x: hidden;
-  cursor: crosshair;
 }
 
-/* SCANLINES */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,0,0,0.08) 2px,
-    rgba(0,0,0,0.08) 4px
-  );
-  pointer-events: none;
-  z-index: 9999;
-}
-
-/* PHOSPHOR GLOW UTILITY */
-.glow { text-shadow: 0 0 8px var(--phosphor), 0 0 20px var(--phosphor2); }
-.glow-amber { text-shadow: 0 0 8px var(--amber), 0 0 20px #ff8c00; }
-
-/* SCROLLBAR */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--phosphor2); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 
-/* ─── BOOT OVERLAY ─── */
-#boot-overlay {
-  position: fixed;
-  inset: 0;
-  background: var(--bg);
-  z-index: 10000;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--mono);
-  padding: 2rem;
-  transition: opacity 0.8s ease;
-}
-
-#boot-overlay.fade-out {
-  opacity: 0;
-  pointer-events: none;
-}
-
-#boot-log {
-  width: min(640px, 100%);
-  font-size: 13px;
-  line-height: 1.8;
-  color: var(--phosphor);
-}
-
-.boot-line { opacity: 0; animation: bootline 0.05s forwards; }
-.boot-ok   { color: var(--phosphor3); }
-.boot-warn { color: var(--amber); }
-.boot-addr { color: var(--cyan); }
-.boot-skip { display: inline-block; width: 0; overflow: hidden; white-space: nowrap; }
-
-@keyframes bootline { to { opacity: 1; } }
-
-#boot-progress-wrap {
-  width: min(640px, 100%);
-  margin-top: 2rem;
-  border: 1px solid var(--muted);
-  padding: 2px;
-}
-
-#boot-progress-bar {
-  height: 6px;
-  background: var(--phosphor);
-  width: 0%;
-  transition: width 0.1s linear;
-  box-shadow: 0 0 10px var(--phosphor);
-}
-
-/* ─── OSCILLOSCOPE CANVAS ─── */
-#osc-canvas {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 80px;
-  z-index: 100;
-  opacity: 0.35;
-  pointer-events: none;
-}
-
-/* ─── NAV ─── */
-nav {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 500;
-  border-bottom: 1px solid var(--border);
-  background: rgba(6,10,6,0.92);
-  backdrop-filter: blur(8px);
+.container {
+  max-width: 1040px;
+  margin: 0 auto;
   padding: 0 2rem;
 }
 
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; width: 100%;
+  z-index: 200;
+  background: rgba(248,247,244,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
 .nav-inner {
-  max-width: 1200px;
+  max-width: 1040px;
   margin: 0 auto;
+  padding: 0 2rem;
+  height: 58px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 52px;
 }
 
 .nav-logo {
-  font-size: 12px;
-  color: var(--phosphor);
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
+  font-family: var(--serif);
+  font-size: 1rem;
+  color: var(--text);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-.nav-logo span { color: var(--muted); }
-
-.nav-status {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-}
-
-.status-dot {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
+.nav-logo span {
+  font-weight: 400;
+  font-style: italic;
   color: var(--muted);
-  letter-spacing: 0.08em;
 }
 
-.status-dot::before {
-  content: '';
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: var(--phosphor);
-  box-shadow: 0 0 6px var(--phosphor);
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-
-.nav-links {
+nav ul {
+  list-style: none;
   display: flex;
   gap: 2rem;
-  list-style: none;
 }
 
-.nav-links a {
-  font-size: 11px;
+nav a {
+  font-size: 13px;
+  font-weight: 500;
   color: var(--muted);
   text-decoration: none;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  transition: color 0.2s;
+  letter-spacing: 0.01em;
+  transition: color 0.18s;
 }
 
-.nav-links a:hover { color: var(--phosphor); text-shadow: 0 0 8px var(--phosphor); }
+nav a:hover { color: var(--text); }
 
-/* ─── SECTIONS ─── */
-.container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
-
-section { padding: 6rem 0; }
-
-/* SECTION HEADERS */
-.sec-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 3rem;
+.nav-hire {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--accent) !important;
+  border: 1.5px solid var(--accent);
+  padding: 5px 14px;
+  border-radius: 4px;
+  transition: all 0.18s !important;
 }
 
-.sec-num {
-  font-size: 11px;
-  color: var(--muted);
-  letter-spacing: 0.15em;
+.nav-hire:hover {
+  background: var(--accent) !important;
+  color: #fff !important;
 }
 
-.sec-title {
-  font-family: var(--sans);
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--phosphor);
-  text-shadow: 0 0 20px var(--phosphor2);
-  letter-spacing: 0.05em;
-}
-
-.sec-line {
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(to right, var(--border), transparent);
-}
-
-/* ─── HERO ─── */
+/* ── HERO ── */
 #hero {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding-top: 52px;
-  position: relative;
-  overflow: hidden;
+  padding-top: 58px;
 }
 
-/* Grid overlay */
-#hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(0,255,65,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,65,0.04) 1px, transparent 1px);
-  background-size: 48px 48px;
-  pointer-events: none;
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 5rem;
+  align-items: center;
+  padding: 5rem 0;
 }
 
-/* Radial glow center */
-#hero::after {
-  content: '';
-  position: absolute;
-  top: 50%; left: 30%;
-  transform: translate(-50%, -50%);
-  width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(0,255,65,0.06) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.hero-content { position: relative; z-index: 1; }
-
-.hero-tag {
+.hero-label {
+  font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.25em;
+  font-weight: 400;
+  color: var(--muted2);
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--phosphor);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.2rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 8px;
 }
 
-.hero-tag::before {
-  content: '►';
-  font-size: 8px;
-  animation: blink-cursor 1s step-end infinite;
-}
-
-@keyframes blink-cursor { 50% { opacity: 0; } }
-
-h1.hero-name {
-  font-family: var(--sans);
-  font-size: clamp(3rem, 7vw, 6rem);
-  font-weight: 800;
-  line-height: 0.95;
-  letter-spacing: -0.02em;
-  color: #fff;
-  margin-bottom: 0.5rem;
-}
-
-h1.hero-name span {
+.hero-label::before {
+  content: '';
+  width: 18px; height: 1px;
+  background: var(--border2);
   display: block;
-  color: var(--phosphor);
-  text-shadow: 0 0 40px var(--phosphor2), 0 0 80px rgba(0,255,65,0.3);
+}
+
+h1 {
+  font-family: var(--serif);
+  font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+}
+
+h1 em {
+  font-style: italic;
+  color: var(--accent);
 }
 
 .hero-role {
-  font-size: 13px;
+  font-family: var(--mono);
+  font-size: 12px;
   color: var(--muted);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  margin-bottom: 2rem;
-  margin-top: 1rem;
+  letter-spacing: 0.1em;
+  margin-bottom: 1.8rem;
+  margin-top: 0.8rem;
 }
 
-.hero-role em { color: var(--amber); font-style: normal; }
+/* CES badge */
+.ces-badge {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--amber-lt);
+  border: 1px solid #f5d5a8;
+  border-left: 3px solid var(--amber);
+  padding: 12px 16px;
+  margin-bottom: 1.8rem;
+  max-width: 500px;
+  text-decoration: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  display: block;
+}
+
+.ces-badge:hover {
+  box-shadow: 0 2px 12px rgba(184,92,0,0.12);
+  border-color: var(--amber);
+}
+
+.ces-badge-inner { display: flex; align-items: flex-start; gap: 12px; }
+
+.ces-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.ces-text {}
+.ces-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--amber);
+  font-family: var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.ces-desc {
+  font-size: 12.5px;
+  color: #7a4a00;
+  line-height: 1.5;
+  font-weight: 300;
+}
+
+.ces-arrow {
+  font-size: 11px;
+  color: var(--amber);
+  margin-top: 1px;
+  flex-shrink: 0;
+  align-self: center;
+}
 
 .hero-desc {
-  max-width: 560px;
-  line-height: 1.8;
-  color: #6a9e6a;
-  font-size: 13px;
-  margin-bottom: 3rem;
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.75;
+  max-width: 480px;
+  margin-bottom: 2rem;
+  font-weight: 300;
 }
 
-.hero-desc strong { color: var(--text); font-weight: 600; }
+.hero-desc strong { color: var(--text); font-weight: 500; }
 
-.hero-cta {
+.hero-btns {
   display: flex;
-  gap: 1rem;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
 .btn {
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.15em;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 0.75rem 1.75rem;
+  padding: 10px 20px;
   text-decoration: none;
-  transition: all 0.2s;
-  cursor: crosshair;
-  border: none;
+  transition: all 0.18s;
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 7px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
 }
 
-.btn-primary {
-  background: var(--phosphor);
-  color: #000;
-  font-weight: 700;
-  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+.btn-dark {
+  background: var(--text);
+  color: #fff;
 }
 
-.btn-primary:hover {
-  background: #fff;
-  box-shadow: 0 0 30px var(--phosphor);
-  transform: translateY(-2px);
+.btn-dark:hover {
+  background: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(26,58,92,0.2);
 }
 
 .btn-outline {
   background: transparent;
-  color: var(--phosphor);
-  border: 1px solid var(--border);
-  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  color: var(--text);
+  border: 1.5px solid var(--border2);
 }
 
 .btn-outline:hover {
-  border-color: var(--phosphor);
-  background: rgba(0,255,65,0.05);
-  box-shadow: 0 0 20px rgba(0,255,65,0.15);
-  transform: translateY(-2px);
+  border-color: var(--text);
+  transform: translateY(-1px);
 }
 
-/* Hero right panel — live data */
-.hero-panel {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 340px;
+/* Hero right card */
+.hero-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-right: none;
-  font-size: 11px;
+  border-radius: 8px;
   overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
 }
 
-.panel-header {
-  background: var(--surface2);
-  border-bottom: 1px solid var(--border);
-  padding: 8px 14px;
+.hcard-header {
+  background: var(--accent);
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hcard-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.hcard-status {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  gap: 5px;
+  font-family: var(--mono);
   font-size: 10px;
+  color: #7fffb0;
 }
 
-.panel-header span { color: var(--phosphor); }
+.hcard-status::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #7fffb0;
+  animation: pulse 2s ease-in-out infinite;
+}
 
-.panel-body { padding: 12px 14px; }
+@keyframes pulse { 50% { opacity: 0.35; } }
 
-.data-row {
+.hcard-rows { padding: 4px 0; }
+
+.hcard-row {
   display: flex;
   justify-content: space-between;
-  padding: 5px 0;
-  border-bottom: 1px solid rgba(26,46,26,0.5);
-  animation: dataflicker 3s ease-in-out infinite;
+  align-items: center;
+  padding: 9px 18px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
 }
 
-.data-row:nth-child(2) { animation-delay: 0.4s; }
-.data-row:nth-child(3) { animation-delay: 0.8s; }
-.data-row:nth-child(4) { animation-delay: 1.2s; }
-.data-row:nth-child(5) { animation-delay: 1.6s; }
-.data-row:nth-child(6) { animation-delay: 2.0s; }
+.hcard-row:last-child { border-bottom: none; }
+.hcard-row:hover { background: var(--surface2); }
 
-@keyframes dataflicker {
-  0%,95%,100% { opacity: 1; }
-  96% { opacity: 0.3; }
-  97% { opacity: 1; }
-  98% { opacity: 0.5; }
-  99% { opacity: 1; }
-}
-
-.data-key { color: var(--muted); }
-.data-val { color: var(--phosphor); font-weight: 600; }
-.data-val.amber { color: var(--amber); }
-.data-val.cyan  { color: var(--cyan); }
-
-.panel-can {
-  margin-top: 10px;
-  border-top: 1px solid var(--border);
-  padding-top: 10px;
-}
-
-.can-frame {
+.hcard-key {
+  font-family: var(--mono);
   font-size: 10px;
-  padding: 3px 0;
-  color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
+  color: var(--muted2);
+  letter-spacing: 0.04em;
 }
 
-.can-frame .id   { color: var(--amber); }
-.can-frame .dlc  { color: var(--cyan); }
-.can-frame .data { color: var(--phosphor); }
+.hcard-val {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text);
+  font-weight: 500;
+  text-align: right;
+}
 
-/* ─── STATS STRIP ─── */
-#stats-strip {
+.hcard-val.blue  { color: var(--accent); }
+.hcard-val.amber { color: var(--amber); }
+.hcard-val.green { color: var(--green); }
+
+/* ── STATS ── */
+#stats {
   padding: 0;
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   background: var(--surface);
 }
 
-.stats-grid {
+.stats-row {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  divide: var(--border);
+  grid-template-columns: repeat(4, 1fr);
 }
 
-.stat-item {
-  padding: 2rem 1.5rem;
+.stat-cell {
+  padding: 2.4rem 2rem;
   border-right: 1px solid var(--border);
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  transition: background 0.2s;
+  transition: background 0.18s;
 }
 
-.stat-item:last-child { border-right: none; }
-.stat-item:hover { background: var(--surface2); }
-
-.stat-item::before {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 1px;
-  background: var(--phosphor);
-  transition: width 0.3s;
-  box-shadow: 0 0 8px var(--phosphor);
-}
-
-.stat-item:hover::before { width: 80%; }
+.stat-cell:last-child { border-right: none; }
+.stat-cell:hover { background: var(--surface2); }
 
 .stat-num {
   display: block;
-  font-family: var(--sans);
-  font-size: 2.2rem;
-  font-weight: 800;
-  color: var(--phosphor);
-  text-shadow: 0 0 20px var(--phosphor2);
+  font-family: var(--serif);
+  font-size: 2.6rem;
+  font-weight: 600;
+  color: var(--text);
   line-height: 1;
   margin-bottom: 0.4rem;
+  letter-spacing: -0.02em;
 }
 
-.stat-label {
-  display: block;
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-/* ─── SKILLS — REGISTER MAP ─── */
-#skills { background: var(--surface); }
-
-.regmap {
-  border: 1px solid var(--border);
-  font-size: 11px;
-  overflow: hidden;
-}
-
-.regmap-header {
-  background: var(--surface2);
-  border-bottom: 1px solid var(--border);
-  padding: 8px 16px;
-  display: grid;
-  grid-template-columns: 80px 1fr 120px;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  font-size: 10px;
-}
-
-.reg-row {
-  display: grid;
-  grid-template-columns: 80px 1fr 120px;
-  align-items: center;
-  border-bottom: 1px solid rgba(26,46,26,0.4);
-  padding: 10px 16px;
-  transition: background 0.15s;
-  cursor: default;
-}
-
-.reg-row:last-child { border-bottom: none; }
-.reg-row:hover { background: rgba(0,255,65,0.03); }
-
-.reg-addr {
+.stat-num sup {
+  font-size: 1.2rem;
+  color: var(--accent);
   font-family: var(--mono);
-  color: var(--cyan);
-  font-size: 10px;
-  letter-spacing: 0.05em;
 }
 
-.reg-name { color: var(--text); font-weight: 600; letter-spacing: 0.05em; }
-
-.reg-bits {
-  display: flex;
-  gap: 2px;
-  flex-wrap: wrap;
-}
-
-.bit {
-  font-size: 9px;
-  padding: 2px 5px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
+.stat-desc {
+  font-size: 11px;
+  font-weight: 500;
   color: var(--muted);
   letter-spacing: 0.05em;
-  transition: all 0.15s;
+  text-transform: uppercase;
 }
 
-.reg-row:hover .bit { border-color: rgba(0,255,65,0.3); color: var(--phosphor); }
+/* ── SECTION ── */
+section { padding: 5.5rem 0; }
 
-.bit.active {
-  background: rgba(0,255,65,0.1);
-  border-color: var(--phosphor2);
-  color: var(--phosphor);
-}
-
-.bit.amber {
-  background: rgba(255,179,0,0.1);
-  border-color: rgba(255,179,0,0.4);
-  color: var(--amber);
-}
-
-.bit.cyan {
-  background: rgba(0,229,255,0.08);
-  border-color: rgba(0,229,255,0.3);
-  color: var(--cyan);
-}
-
-.reg-level {
-  display: flex;
-  gap: 3px;
-  align-items: center;
+.section-eyebrow {
+  font-family: var(--mono);
   font-size: 10px;
+  font-weight: 400;
+  color: var(--muted2);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
 }
 
-.level-pip {
-  width: 8px; height: 8px;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  transition: all 0.15s;
-}
-
-.level-pip.filled {
-  background: var(--phosphor);
-  box-shadow: 0 0 4px var(--phosphor);
-  border-color: var(--phosphor);
-}
-
-.level-pip.amber.filled {
-  background: var(--amber);
-  box-shadow: 0 0 4px var(--amber);
-  border-color: var(--amber);
-}
-
-/* ─── EXPERIENCE TIMELINE ─── */
-.exp-timeline { display: flex; flex-direction: column; gap: 0; }
-
-.exp-entry {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  border: 1px solid var(--border);
-  border-bottom: none;
-  overflow: hidden;
-}
-
-.exp-entry:first-child { border-radius: 4px 4px 0 0; }
-.exp-entry:last-child  { border-bottom: 1px solid var(--border); border-radius: 0 0 4px 4px; }
-
-.exp-sidebar {
-  background: var(--surface2);
-  border-right: 1px solid var(--border);
-  padding: 1.5rem;
-  position: relative;
-}
-
-.exp-sidebar::after {
-  content: '';
-  position: absolute;
-  right: -1px; top: 2rem;
-  width: 8px; height: 8px;
-  background: var(--phosphor);
-  border-radius: 50%;
-  transform: translateX(50%);
-  box-shadow: 0 0 8px var(--phosphor);
-  z-index: 1;
-}
-
-.exp-period {
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  margin-bottom: 0.75rem;
-  display: block;
-}
-
-.exp-company {
-  font-family: var(--sans);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--phosphor);
-  margin-bottom: 0.25rem;
+h2 {
+  font-family: var(--serif);
+  font-size: clamp(1.7rem, 2.8vw, 2.4rem);
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 2.5rem;
   line-height: 1.2;
 }
 
-.exp-role {
-  font-size: 10px;
-  color: var(--amber);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+h2 em { font-style: italic; color: var(--accent); }
+
+/* ── EXPERIENCE — CARD GRID ── */
+#experience { background: var(--surface); }
+
+.exp-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.exp-badge {
+.exp-card {
+  background: var(--surface);
+  display: grid;
+  grid-template-columns: 220px 1fr;
+}
+
+.exp-card + .exp-card { border-top: 1px solid var(--border); }
+
+.exp-left {
+  background: var(--surface2);
+  padding: 1.8rem;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.exp-period {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted2);
+  letter-spacing: 0.05em;
+}
+
+.exp-company {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+.exp-role-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+
+.exp-pill {
   display: inline-block;
-  margin-top: 0.75rem;
+  margin-top: 0.4rem;
+  font-family: var(--mono);
   font-size: 9px;
-  padding: 2px 8px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  border: 1px solid var(--phosphor2);
-  color: var(--phosphor);
-  background: rgba(0,255,65,0.05);
+  padding: 3px 9px;
+  border-radius: 3px;
+  border: 1px solid;
+  width: fit-content;
 }
 
-.exp-main {
-  padding: 1.5rem 2rem;
+.exp-pill.current {
+  color: var(--green);
+  border-color: rgba(26,92,58,0.3);
+  background: var(--green-lt);
 }
 
-.exp-bullets {
+.exp-pill.intern {
+  color: var(--muted);
+  border-color: var(--border2);
+  background: transparent;
+}
+
+.exp-right { padding: 1.8rem 2rem; }
+
+/* Metric chips row */
+.exp-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 1.2rem;
+}
+
+.chip {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+  border: 1px solid;
+}
+
+.chip-blue {
+  color: var(--accent);
+  border-color: rgba(26,58,92,0.2);
+  background: var(--accent-lt);
+}
+
+.chip-amber {
+  color: var(--amber);
+  border-color: rgba(184,92,0,0.2);
+  background: var(--amber-lt);
+}
+
+.chip-neutral {
+  color: var(--muted);
+  border-color: var(--border);
+  background: var(--surface2);
+}
+
+/* Accordion bullets */
+.exp-accordion { display: flex; flex-direction: column; gap: 4px; }
+
+.acc-item {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.acc-trigger {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.15s;
+  gap: 1rem;
+}
+
+.acc-trigger:hover { background: var(--surface2); }
+
+.acc-trigger-text {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.acc-trigger-text span {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.acc-icon {
+  font-size: 14px;
+  color: var(--muted2);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+  line-height: 1;
+}
+
+.acc-item.open .acc-icon { transform: rotate(45deg); }
+
+.acc-body {
+  display: none;
+  padding: 0 14px 12px;
+  border-top: 1px solid var(--border);
+  background: var(--surface2);
+}
+
+.acc-item.open .acc-body { display: block; }
+
+.acc-bullets {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 5px;
+  padding-top: 10px;
 }
 
-.exp-bullets li {
-  font-size: 12px;
-  color: #5a8a5a;
+.acc-bullets li {
+  font-size: 12.5px;
+  color: var(--muted);
   line-height: 1.65;
-  padding-left: 1.25rem;
+  padding-left: 14px;
   position: relative;
+  font-weight: 300;
 }
 
-.exp-bullets li::before {
+.acc-bullets li::before {
   content: '›';
   position: absolute;
   left: 0;
-  color: var(--phosphor2);
+  color: var(--border2);
   font-size: 14px;
   line-height: 1.4;
 }
 
-.exp-bullets strong { color: var(--text); font-weight: 600; }
-.exp-bullets .metric { color: var(--amber); font-weight: 600; }
+.acc-bullets strong { color: var(--text); font-weight: 500; }
+.acc-bullets .num { font-family: var(--mono); font-size: 11.5px; font-weight: 600; color: var(--accent); }
 
-/* ─── PROJECTS ─── */
-.proj-grid {
+/* ── SKILLS ── */
+.skills-wrapper {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1px;
   background: var(--border);
   border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
 }
+
+.sk-block {
+  background: var(--surface);
+  padding: 1.4rem 1.6rem;
+  transition: background 0.15s;
+}
+
+.sk-block:hover { background: var(--surface2); }
+
+.sk-name {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 0.6rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sk-level {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted2);
+  letter-spacing: 0.08em;
+  font-weight: 400;
+}
+
+.sk-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.stag {
+  font-family: var(--mono);
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  transition: all 0.15s;
+}
+
+.stag.hi {
+  background: var(--accent-lt);
+  border-color: rgba(26,58,92,0.2);
+  color: var(--accent);
+}
+
+/* ── PROJECTS ── */
+#projects { background: var(--surface); }
+
+.proj-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: all 0.15s;
+}
+
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
 
 .proj-card {
   background: var(--surface);
-  padding: 2rem;
+  padding: 1.8rem;
+  transition: background 0.18s;
   position: relative;
-  overflow: hidden;
-  transition: background 0.2s;
 }
 
 .proj-card:hover { background: var(--surface2); }
 
-/* Corner cuts */
-.proj-card::before,
-.proj-card::after {
-  content: '';
-  position: absolute;
-  width: 12px; height: 12px;
-  border-color: var(--phosphor2);
-  border-style: solid;
-  opacity: 0;
-  transition: opacity 0.2s;
+.proj-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.8rem;
 }
 
-.proj-card::before { top: 8px; left: 8px; border-width: 1px 0 0 1px; }
-.proj-card::after  { bottom: 8px; right: 8px; border-width: 0 1px 1px 0; }
-.proj-card:hover::before,
-.proj-card:hover::after { opacity: 1; }
+.proj-badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 3px;
+  border: 1px solid;
+}
 
-.proj-id {
-  font-size: 10px;
+.proj-badge.oem {
+  color: var(--accent);
+  border-color: rgba(26,58,92,0.2);
+  background: var(--accent-lt);
+}
+
+.proj-badge.personal {
   color: var(--muted);
-  letter-spacing: 0.2em;
-  margin-bottom: 1rem;
+  border-color: var(--border2);
+  background: transparent;
+}
+
+.proj-ces {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--amber);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.proj-ces::before {
+  content: '★';
+  font-size: 9px;
 }
 
 .proj-title {
-  font-family: var(--sans);
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
   color: var(--text);
   margin-bottom: 0.5rem;
-  line-height: 1.25;
+  line-height: 1.3;
 }
 
-.proj-oem {
+.proj-sub {
+  font-family: var(--mono);
   font-size: 10px;
-  color: var(--amber);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
+  color: var(--muted2);
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.05em;
 }
 
 .proj-desc {
-  font-size: 11px;
+  font-size: 12.5px;
   color: var(--muted);
-  line-height: 1.7;
-  margin-bottom: 1.5rem;
+  line-height: 1.65;
+  margin-bottom: 1.2rem;
+  font-weight: 300;
 }
 
 .proj-stack {
@@ -785,171 +815,222 @@ h1.hero-name span {
   gap: 4px;
 }
 
-.tag {
+.ptag {
+  font-family: var(--mono);
   font-size: 9px;
-  padding: 3px 8px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border: 1px solid var(--border);
-  color: var(--muted);
+  padding: 2px 7px;
+  border-radius: 3px;
   background: var(--surface2);
-  transition: all 0.15s;
-}
-
-.proj-card:hover .tag {
-  border-color: rgba(0,255,65,0.2);
-  color: var(--phosphor2);
-}
-
-.tag.highlight {
-  border-color: rgba(0,255,65,0.3);
-  color: var(--phosphor);
-  background: rgba(0,255,65,0.05);
-}
-
-/* ─── CAN BUS VISUALIZER ─── */
-#canbus-section { background: var(--surface); }
-
-#can-viz {
   border: 1px solid var(--border);
-  background: var(--bg);
+  color: var(--muted2);
+}
+
+.proj-card:hover .ptag { color: var(--muted); }
+.ptag.core { background: var(--accent-lt); border-color: rgba(26,58,92,0.15); color: var(--accent); }
+
+/* ── GITHUB ── */
+.gh-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.gh-link {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: color 0.15s;
+}
+
+.gh-link:hover { color: var(--accent); }
+
+#gh-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
   overflow: hidden;
 }
 
-.can-toolbar {
-  background: var(--surface2);
-  border-bottom: 1px solid var(--border);
-  padding: 8px 16px;
+.gh-card {
+  background: var(--surface);
+  padding: 1.4rem;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s;
+  display: block;
+}
+
+.gh-card:hover { background: var(--surface2); }
+
+.gh-card-top {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 2rem;
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  margin-bottom: 0.5rem;
 }
 
-.can-toolbar span { color: var(--phosphor); }
-
-#can-stream {
-  height: 260px;
-  overflow-y: auto;
-  padding: 8px 0;
-  font-size: 11px;
+.gh-name {
   font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.02em;
 }
 
-#can-stream::-webkit-scrollbar { width: 2px; }
-#can-stream::-webkit-scrollbar-thumb { background: var(--muted); }
+.gh-lang {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--muted2);
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--surface2);
+}
 
-.can-msg {
-  display: grid;
-  grid-template-columns: 80px 70px 60px 30px 1fr auto;
+.gh-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 0.9rem;
+  font-weight: 300;
+}
+
+.gh-meta {
+  display: flex;
   gap: 1rem;
-  padding: 3px 16px;
-  border-bottom: 1px solid rgba(26,46,26,0.3);
-  animation: msgappear 0.15s ease;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted2);
 }
 
-.can-msg:hover { background: rgba(0,255,65,0.03); }
-
-@keyframes msgappear {
-  from { opacity: 0; transform: translateX(-8px); }
-  to   { opacity: 1; transform: none; }
+.gh-placeholder, .gh-error {
+  grid-column: 1 / -1;
+  padding: 3rem 2rem;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
 }
 
-.can-ts   { color: var(--muted); }
-.can-id   { color: var(--amber); font-weight: 600; }
-.can-ch   { color: var(--cyan); }
-.can-dlc  { color: var(--muted); }
-.can-data { color: var(--phosphor); letter-spacing: 0.05em; }
-.can-desc { color: #3a5a3a; text-align: right; font-size: 10px; }
+.gh-placeholder a, .gh-error a {
+  color: var(--accent);
+  text-decoration: none;
+}
 
-/* ─── CONTACT / TERMINAL ─── */
+/* ── CONTACT ── */
 #contact { background: var(--surface); }
 
-.terminal {
-  border: 1px solid var(--border);
-  overflow: hidden;
-  max-width: 680px;
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
 }
 
-.term-bar {
-  background: var(--surface2);
-  border-bottom: 1px solid var(--border);
-  padding: 8px 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
+.contact-lead {
+  font-size: 15px;
   color: var(--muted);
+  line-height: 1.75;
+  font-weight: 300;
+  margin-bottom: 2rem;
 }
 
-.term-dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-}
+.contact-lead strong { color: var(--text); font-weight: 500; }
 
-.term-dot.r { background: #ff5f57; }
-.term-dot.y { background: #febc2e; }
-.term-dot.g { background: #28c840; }
+.contact-list { display: flex; flex-direction: column; gap: 10px; }
 
-.term-title { margin-left: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase; font-size: 10px; }
-
-.term-body {
-  padding: 1.5rem;
-  min-height: 260px;
-}
-
-.term-line {
-  line-height: 1.8;
-  color: var(--text);
-  font-size: 12px;
-}
-
-.term-line.comment { color: var(--muted); }
-.term-line.cmd     { color: var(--phosphor); }
-.term-line.cmd::before { content: '$ '; color: var(--phosphor2); }
-.term-line.out     { color: #5a8a5a; padding-left: 1.5rem; }
-.term-line.link a  { color: var(--cyan); text-decoration: none; }
-.term-line.link a:hover { text-decoration: underline; color: var(--phosphor); }
-
-.term-input-row {
+.clink {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--border);
+  gap: 14px;
+  padding: 13px 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.18s;
+  color: inherit;
 }
 
-.term-prompt { color: var(--phosphor2); font-size: 12px; }
+.clink:hover {
+  border-color: var(--accent);
+  background: var(--surface);
+  transform: translateX(3px);
+  box-shadow: 0 2px 10px rgba(26,58,92,0.08);
+}
 
-#term-input {
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--phosphor);
+.clink-icon {
   font-family: var(--mono);
-  font-size: 12px;
-  flex: 1;
-  caret-color: var(--phosphor);
-  cursor: crosshair;
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  font-weight: 500;
+  min-width: 58px;
 }
 
-.term-output-area {
-  margin-top: 0.5rem;
-  min-height: 40px;
-  font-size: 12px;
+.clink-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
 }
 
-/* ─── FOOTER ─── */
+.clink-sub {
+  font-size: 11px;
+  color: var(--muted2);
+  font-family: var(--mono);
+  margin-top: 1px;
+}
+
+/* Status card */
+.status-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.status-card-header {
+  background: var(--accent);
+  padding: 12px 18px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.status-rows { padding: 4px 0; }
+
+.sr {
+  display: flex;
+  justify-content: space-between;
+  padding: 9px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.sr:last-child { border-bottom: none; }
+.sr-key { color: var(--muted); font-weight: 300; }
+.sr-val { color: var(--text); font-weight: 500; }
+.sr-val.yes { color: var(--green); }
+
+/* ── FOOTER ── */
 footer {
   border-top: 1px solid var(--border);
-  padding: 1.5rem 2rem;
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 0.1em;
+  padding: 1.8rem 0;
+}
+
+.footer-inner {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -957,306 +1038,320 @@ footer {
   gap: 1rem;
 }
 
-footer span { color: var(--phosphor2); }
+.footer-name {
+  font-family: var(--serif);
+  font-size: 13px;
+  color: var(--muted);
+}
 
-/* ─── ANIMATIONS & REVEALS ─── */
+.footer-name strong { color: var(--text); }
+
+.footer-meta {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted2);
+  letter-spacing: 0.06em;
+}
+
+/* ── REVEAL ── */
 .reveal {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-.reveal.visible {
-  opacity: 1;
-  transform: none;
-}
+.reveal.in { opacity: 1; transform: none; }
+.delay-1 { transition-delay: 0.1s; }
+.delay-2 { transition-delay: 0.2s; }
+.delay-3 { transition-delay: 0.3s; }
 
-@media (max-width: 900px) {
-  .hero-panel { display: none; }
-  .stats-grid { grid-template-columns: repeat(3, 1fr); }
-  .proj-grid  { grid-template-columns: 1fr; }
-  .exp-entry  { grid-template-columns: 1fr; }
-  .exp-sidebar::after { display: none; }
+/* ── RESPONSIVE ── */
+@media (max-width: 960px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 3rem; }
+  .hero-card { display: none; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .skills-wrapper { grid-template-columns: repeat(2, 1fr); }
+  .tab-panel.active { grid-template-columns: 1fr; }
+  #gh-grid { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .exp-card { grid-template-columns: 1fr; }
+  .exp-left { border-right: none; border-bottom: 1px solid var(--border); }
+  nav ul { display: none; }
 }
 
 @media (max-width: 600px) {
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .nav-links  { display: none; }
+  .skills-wrapper { grid-template-columns: 1fr; }
+  h1 { font-size: 2.6rem; }
+  .stat-num { font-size: 2rem; }
 }
 </style>
 </head>
 <body>
 
-<!-- BOOT SEQUENCE -->
-<div id="boot-overlay">
-  <div id="boot-log"></div>
-  <div id="boot-progress-wrap">
-    <div id="boot-progress-bar"></div>
-  </div>
-</div>
-
-<!-- OSCILLOSCOPE -->
-<canvas id="osc-canvas"></canvas>
-
-<!-- NAV -->
 <nav>
   <div class="nav-inner">
-    <div class="nav-logo">SVK<span>::</span>embedded_sys</div>
-    <ul class="nav-links">
-      <li><a href="#skills">Skills</a></li>
+    <div class="nav-logo">Senthil <span>Vel Kumaran</span></div>
+    <ul>
       <li><a href="#experience">Experience</a></li>
+      <li><a href="#skills">Skills</a></li>
       <li><a href="#projects">Projects</a></li>
-      <li><a href="#canbus-section">CAN Monitor</a></li>
+      <li><a href="#github">GitHub</a></li>
       <li><a href="#contact">Contact</a></li>
+      <li><a href="mailto:senthil3112000@gmail.com" class="nav-hire">Get in touch</a></li>
     </ul>
-    <div class="nav-status">
-      <div class="status-dot">SYS_READY</div>
-    </div>
   </div>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
   <div class="container">
-    <div class="hero-content">
-      <div class="hero-tag">Embedded Systems Engineer · Chennai, India</div>
-      <h1 class="hero-name">
-        Senthil Vel
-        <span>Kumaran</span>
-      </h1>
-      <div class="hero-role">
-        Visteon Corporation &nbsp;·&nbsp; <em>Tier-1 OEM Supplier</em> &nbsp;·&nbsp; Automotive ECU
-      </div>
-      <p class="hero-desc">
-        Safety-critical firmware running in <strong>400,000+ Mahindra &amp; Tata Motors</strong>
-        production vehicles. Specialist in <strong>AUTOSAR Classic, ISO 26262 (ASIL-D),
-        Qualcomm Snapdragon 8155</strong> SoC integration, and real-time in-vehicle protocols.
-      </p>
-      <div class="hero-cta">
-        <a href="https://github.com/senthilvel-k" target="_blank" class="btn btn-primary">⌥ GitHub Profile</a>
-        <a href="#contact" class="btn btn-outline">▸ Get in Touch</a>
-      </div>
-    </div>
-  </div>
+    <div class="hero-grid">
+      <div>
+        <div class="hero-label">Embedded Systems Engineer · Chennai, India</div>
+        <h1>Senthil Vel<br><em>Kumaran.</em></h1>
+        <div class="hero-role">Visteon Corporation &nbsp;·&nbsp; Tier-1 Automotive Supplier &nbsp;·&nbsp; ECU Firmware</div>
 
-  <!-- Live ECU Data Panel -->
-  <div class="hero-panel">
-    <div class="panel-header">
-      ECU_LIVE_DATA <span>● ONLINE</span>
-    </div>
-    <div class="panel-body">
-      <div class="data-row"><span class="data-key">MCU_TYPE</span><span class="data-val">RH850/F1KM</span></div>
-      <div class="data-row"><span class="data-key">OS_CORE</span><span class="data-val">AUTOSAR_OS</span></div>
-      <div class="data-row"><span class="data-key">CAN_STATE</span><span class="data-val cyan">BUS_ACTIVE</span></div>
-      <div class="data-row"><span class="data-key">UDS_SESSION</span><span class="data-val amber">DEFAULT</span></div>
-      <div class="data-row"><span class="data-key">SLEEP_I_MA</span><span class="data-val" id="sleep-val">0.82</span></div>
-      <div class="data-row"><span class="data-key">ISO_26262</span><span class="data-val">ASIL-D</span></div>
-      <div class="data-row"><span class="data-key">ETH_LINK</span><span class="data-val cyan">100BASE-T1</span></div>
-      <div class="panel-can">
-        <div class="can-frame"><span class="id">0x1A4</span> [<span class="dlc">8</span>] <span class="data" id="cf1">FF 00 A3 2C 00 00 00 01</span></div>
-        <div class="can-frame"><span class="id">0x3B2</span> [<span class="dlc">4</span>] <span class="data" id="cf2">00 01 F0 44</span></div>
-        <div class="can-frame"><span class="id">0x7DF</span> [<span class="dlc">8</span>] <span class="data" id="cf3">02 10 03 CC CC CC CC CC</span></div>
+        <a href="https://www.linkedin.com/posts/visteon_ces2026-activity-7414834485546074112-ukkf/" target="_blank" class="ces-badge">
+          <div class="ces-badge-inner">
+            <div class="ces-icon">🏆</div>
+            <div class="ces-text">
+              <div class="ces-title">CES 2026 · Las Vegas</div>
+              <div class="ces-desc">Contributed firmware to Visteon cockpit ECUs demonstrated at CES 2026 — triple-screen and pillar-to-pillar displays showcased to global automotive OEMs. Click to view post →</div>
+            </div>
+          </div>
+        </a>
+
+        <p class="hero-desc">
+          Safety-critical firmware engineer building cockpit ECUs for <strong>Mahindra &amp; Tata Motors</strong> production programs. Specialist in AUTOSAR Classic, ISO 26262 (ASIL-D), UDS diagnostics, and <strong>Qualcomm Snapdragon 8155</strong> SoC integration.
+        </p>
+
+        <div class="hero-btns">
+          <a href="https://github.com/senthilvel-k" target="_blank" class="btn btn-dark">↗ GitHub Profile</a>
+          <a href="https://www.linkedin.com/in/senthil-vel/" target="_blank" class="btn btn-outline">LinkedIn</a>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <div class="hcard-header">
+          <span class="hcard-title">Engineer Profile</span>
+          <span class="hcard-status">Active</span>
+        </div>
+        <div class="hcard-rows">
+          <div class="hcard-row">
+            <span class="hcard-key">Company</span>
+            <span class="hcard-val">Visteon Corporation</span>
+          </div>
+          <div class="hcard-row">
+            <span class="hcard-key">OEM Programs</span>
+            <span class="hcard-val blue">Mahindra · Tata Motors</span>
+          </div>
+          <div class="hcard-row">
+            <span class="hcard-key">ECUs Shipped</span>
+            <span class="hcard-val blue">3 Programs</span>
+          </div>
+          <div class="hcard-row">
+            <span class="hcard-key">Safety Level</span>
+            <span class="hcard-val">ISO 26262 ASIL-D</span>
+          </div>
+          <div class="hcard-row">
+            <span class="hcard-key">UDS Services</span>
+            <span class="hcard-val">13 · ISO 14229</span>
+          </div>
+          <div class="hcard-row">
+            <span class="hcard-key">MISRA Resolved</span>
+            <span class="hcard-val blue">500+</span>
+          </div>
+          <div class="hcard-row">
+            <span class="hcard-key">CES 2026</span>
+            <span class="hcard-val green">Showcased ✓</span>
+          </div>
+          <div class="hcard-row">
+            <span class="hcard-key">Production C</span>
+            <span class="hcard-val">10,000+ lines</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- STATS -->
-<div id="stats-strip">
+<div id="stats">
   <div class="container">
-    <div class="stats-grid">
-      <div class="stat-item reveal">
-        <span class="stat-num" data-target="400000" data-suffix="K+">0</span>
-        <span class="stat-label">Production Vehicles</span>
+    <div class="stats-row">
+      <div class="stat-cell reveal">
+        <span class="stat-num">2<sup>+</sup></span>
+        <span class="stat-desc">Years at Visteon</span>
       </div>
-      <div class="stat-item reveal">
-        <span class="stat-num" data-target="3" data-suffix="">0</span>
-        <span class="stat-label">Shipped ECU Programs</span>
+      <div class="stat-cell reveal delay-1">
+        <span class="stat-num">3</span>
+        <span class="stat-desc">ECU Programs Shipped</span>
       </div>
-      <div class="stat-item reveal">
-        <span class="stat-num" data-target="13" data-suffix="">0</span>
-        <span class="stat-label">UDS Services (ISO 14229)</span>
+      <div class="stat-cell reveal delay-2">
+        <span class="stat-num" data-count="500">0</span>
+        <span class="stat-desc">MISRA-C Issues Cleared</span>
       </div>
-      <div class="stat-item reveal">
-        <span class="stat-num" data-target="500" data-suffix="+">0</span>
-        <span class="stat-label">MISRA-C Violations Cleared</span>
-      </div>
-      <div class="stat-item reveal">
-        <span class="stat-num" data-target="10" data-suffix="K+">0</span>
-        <span class="stat-label">Lines Production C</span>
+      <div class="stat-cell reveal delay-3">
+        <span class="stat-num" data-count="13">0</span>
+        <span class="stat-desc">UDS Service Handlers</span>
       </div>
     </div>
   </div>
 </div>
 
-<!-- SKILLS — REGISTER MAP -->
-<section id="skills">
+<!-- EXPERIENCE -->
+<section id="experience">
   <div class="container">
-    <div class="sec-header reveal">
-      <span class="sec-num">0x01</span>
-      <h2 class="sec-title">SKILL_REGISTER_MAP</h2>
-      <div class="sec-line"></div>
+    <div class="reveal">
+      <div class="section-eyebrow">Work History</div>
+      <h2>Where I've <em>built things.</em></h2>
     </div>
 
-    <div class="regmap reveal">
-      <div class="regmap-header">
-        <span>ADDR</span>
-        <span>MODULE / SKILL</span>
-        <span>PROFICIENCY</span>
-      </div>
+    <div class="exp-cards reveal">
 
-      <div class="reg-row">
-        <div class="reg-addr">0x0000</div>
-        <div>
-          <div class="reg-name">Embedded C — Production Firmware</div>
-          <div class="reg-bits" style="margin-top:4px">
-            <span class="bit active">AUTOSAR</span><span class="bit active">MISRA-C</span>
-            <span class="bit active">ISR</span><span class="bit active">DMA</span>
-            <span class="bit active">RTOS</span>
+      <!-- Full-time -->
+      <div class="exp-card">
+        <div class="exp-left">
+          <span class="exp-period">Jul 2023 — Present</span>
+          <div class="exp-company">Visteon<br>Corporation</div>
+          <div class="exp-role-title">Embedded Systems Engineer</div>
+          <span class="exp-pill current">Current</span>
+        </div>
+        <div class="exp-right">
+          <div class="exp-chips">
+            <span class="chip chip-blue">3 Production ECUs</span>
+            <span class="chip chip-amber">Mahindra · Tata Motors</span>
+            <span class="chip chip-blue">10,000+ lines C</span>
+            <span class="chip chip-amber">CES 2026</span>
+            <span class="chip chip-neutral">Silver Award</span>
           </div>
-        </div>
-        <div class="reg-level">
-          <div class="level-pip filled"></div><div class="level-pip filled"></div>
-          <div class="level-pip filled"></div><div class="level-pip filled"></div>
-          <div class="level-pip filled"></div>
-          <span style="color:var(--phosphor);font-size:10px;margin-left:4px">●●●●●</span>
-        </div>
-      </div>
+          <div class="exp-accordion">
 
-      <div class="reg-row">
-        <div class="reg-addr">0x0004</div>
-        <div>
-          <div class="reg-name">AUTOSAR Classic Stack</div>
-          <div class="reg-bits" style="margin-top:4px">
-            <span class="bit active">MCAL</span><span class="bit active">CanIf</span>
-            <span class="bit active">PduR</span><span class="bit active">COM</span>
-            <span class="bit active">DCM</span><span class="bit active">DEM</span>
-            <span class="bit active">NM</span><span class="bit active">EcuM</span>
-          </div>
-        </div>
-        <div class="reg-level">
-          <div class="level-pip filled"></div><div class="level-pip filled"></div>
-          <div class="level-pip filled"></div><div class="level-pip filled"></div>
-          <div class="level-pip filled"></div>
-          <span style="color:var(--phosphor);font-size:10px;margin-left:4px">●●●●●</span>
-        </div>
-      </div>
+            <div class="acc-item open">
+              <button class="acc-trigger">
+                <span class="acc-trigger-text">Diagnostics — <span>DCM &amp; DEM · 13 UDS Services</span></span>
+                <span class="acc-icon">+</span>
+              </button>
+              <div class="acc-body">
+                <ul class="acc-bullets">
+                  <li>Sole owner of <strong>DCM and DEM modules</strong> across 2 programs; implemented <span class="num">13 UDS service handlers</span> (ISO 14229) covering session control (0x10), security access (0x27), DTC read/clear (0x19/0x14), routine control (0x31), data I/O (0x22/0x2E)</li>
+                  <li>Delivered complete diagnostic stack <strong>ahead of program gate</strong>, enabling on-time OEM sign-off — recognised with <strong>Visteon Silver Award</strong></li>
+                </ul>
+              </div>
+            </div>
 
-      <div class="reg-row">
-        <div class="reg-addr">0x0008</div>
-        <div>
-          <div class="reg-name">Communication Protocols</div>
-          <div class="reg-bits" style="margin-top:4px">
-            <span class="bit active">CAN FD</span><span class="bit active">SPI</span>
-            <span class="bit active">I²C</span><span class="bit active">UART</span>
-            <span class="bit active cyan">MDIO</span><span class="bit active cyan">100BASE-T1</span>
-            <span class="bit cyan">TCP/IP</span>
-          </div>
-        </div>
-        <div class="reg-level">
-          <div class="level-pip filled"></div><div class="level-pip filled"></div>
-          <div class="level-pip filled"></div><div class="level-pip filled"></div>
-          <div class="level-pip" style="opacity:0.3"></div>
-          <span style="color:var(--phosphor);font-size:10px;margin-left:4px">●●●●○</span>
-        </div>
-      </div>
+            <div class="acc-item">
+              <button class="acc-trigger">
+                <span class="acc-trigger-text">AUTOSAR CAN Stack — <span>200+ PDUs · CAN FD</span></span>
+                <span class="acc-icon">+</span>
+              </button>
+              <div class="acc-body">
+                <ul class="acc-bullets">
+                  <li>Sole owner of <strong>AUTOSAR CAN stack end-to-end</strong>: DBC/ARXML-based signal config for <span class="num">200+ PDUs</span>, MCAL CAN driver through CanIf → PduR → COM layer on 2 production ECUs</li>
+                  <li>Configured both <strong>Classic CAN and CAN FD</strong> networks with interrupt-driven Rx/Tx handling and PDU routing rules</li>
+                </ul>
+              </div>
+            </div>
 
-      <div class="reg-row">
-        <div class="reg-addr">0x000C</div>
-        <div>
-          <div class="reg-name">Microcontrollers</div>
-          <div class="reg-bits" style="margin-top:4px">
-            <span class="bit active">Renesas RH850</span>
-            <span class="bit active">Infineon Traveo II</span>
-            <span class="bit active">NXP MPC560xP</span>
-            <span class="bit amber">ARM Cortex-M7</span>
-          </div>
-        </div>
-        <div class="reg-level">
-          <div class="level-pip filled"></div><div class="level-pip filled"></div>
-          <div class="level-pip filled"></div><div class="level-pip filled"></div>
-          <div class="level-pip" style="opacity:0.3"></div>
-          <span style="color:var(--phosphor);font-size:10px;margin-left:4px">●●●●○</span>
-        </div>
-      </div>
+            <div class="acc-item">
+              <button class="acc-trigger">
+                <span class="acc-trigger-text">Automotive Ethernet — <span>MDIO Driver · NXP SJA1105 · 100BASE-T1</span></span>
+                <span class="acc-icon">+</span>
+              </button>
+              <div class="acc-body">
+                <ul class="acc-bullets">
+                  <li>Wrote <strong>Clause 22 MDIO driver from scratch</strong> for Realtek Ethernet PHY: register-map init, auto-negotiation sequencing, link-status polling</li>
+                  <li>Configured <strong>NXP SJA1105 L2 switch</strong> forwarding tables and VLAN assignments via SPI; completed 100BASE-T1 bring-up <strong>ahead of hardware integration milestone</strong></li>
+                </ul>
+              </div>
+            </div>
 
-      <div class="reg-row">
-        <div class="reg-addr">0x0010</div>
-        <div>
-          <div class="reg-name">SoC / RTOS Integration</div>
-          <div class="reg-bits" style="margin-top:4px">
-            <span class="bit amber">Snapdragon 8155</span>
-            <span class="bit amber">QNX Neutrino</span>
-            <span class="bit">Android Automotive</span>
-            <span class="bit">OSEK</span>
-          </div>
-        </div>
-        <div class="reg-level">
-          <div class="level-pip filled amber"></div><div class="level-pip filled amber"></div>
-          <div class="level-pip filled amber"></div>
-          <div class="level-pip" style="opacity:0.3"></div>
-          <div class="level-pip" style="opacity:0.3"></div>
-          <span style="color:var(--amber);font-size:10px;margin-left:4px">●●●○○</span>
-        </div>
-      </div>
+            <div class="acc-item">
+              <button class="acc-trigger">
+                <span class="acc-trigger-text">SoC Integration — <span>Snapdragon 8155 · QNX · Android Automotive</span></span>
+                <span class="acc-icon">+</span>
+              </button>
+              <div class="acc-body">
+                <ul class="acc-bullets">
+                  <li>Designed <strong>custom UART IPC framing protocol</strong> between Renesas RH850 MCU and Qualcomm Snapdragon 8155 SoC: byte-level packetization, CRC validation, sequence-number retransmission</li>
+                  <li>Vehicle CAN signals delivered into <strong>QNX Neutrino RTOS</strong> and Android Automotive HAL for cockpit dashboard rendering</li>
+                </ul>
+              </div>
+            </div>
 
-      <div class="reg-row">
-        <div class="reg-addr">0x0014</div>
-        <div>
-          <div class="reg-name">Functional Safety (ISO 26262)</div>
-          <div class="reg-bits" style="margin-top:4px">
-            <span class="bit active">ASIL-D</span>
-            <span class="bit active">FMEA</span>
-            <span class="bit active">Fault Handling</span>
-            <span class="bit active">Safety Monitor</span>
-            <span class="bit">FuSa Audit</span>
+            <div class="acc-item">
+              <button class="acc-trigger">
+                <span class="acc-trigger-text">Functional Safety — <span>ISO 26262 ASIL-D · Zero Field Escapes</span></span>
+                <span class="acc-icon">+</span>
+              </button>
+              <div class="acc-body">
+                <ul class="acc-bullets">
+                  <li>Implemented <strong>ASIL-D thermal safety monitor</strong> on NXP MPC560xP: I²C ADC polling, multi-threshold hysteresis (warn/derate/shutdown), PWM backlight attenuation — <span class="num">zero thermal field escapes</span> across full OEM validation</li>
+                  <li>Reduced ECU quiescent current by <span class="num">20–40%</span> on Renesas RH850 via peripheral clock gating and EcuM sleep sequence optimization</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="acc-item">
+              <button class="acc-trigger">
+                <span class="acc-trigger-text">Code Quality — <span>500+ MISRA-C Violations Cleared</span></span>
+                <span class="acc-icon">+</span>
+              </button>
+              <div class="acc-body">
+                <ul class="acc-bullets">
+                  <li>Resolved <span class="num">500+ MISRA-C and static analysis defects</span> (KlocWork, Coverity) across 3 production codebases — zero high-severity escape at integration review gate</li>
+                  <li>Contributed <strong>10,000+ lines of production Embedded C</strong> as sole module owner across all programs</li>
+                </ul>
+              </div>
+            </div>
+
           </div>
-        </div>
-        <div class="reg-level">
-          <div class="level-pip filled"></div><div class="level-pip filled"></div>
-          <div class="level-pip filled"></div><div class="level-pip filled"></div>
-          <div class="level-pip" style="opacity:0.3"></div>
-          <span style="color:var(--phosphor);font-size:10px;margin-left:4px">●●●●○</span>
         </div>
       </div>
 
-      <div class="reg-row">
-        <div class="reg-addr">0x0018</div>
-        <div>
-          <div class="reg-name">Debug &amp; Toolchain</div>
-          <div class="reg-bits" style="margin-top:4px">
-            <span class="bit active">Lauterbach Trace32</span>
-            <span class="bit active">CANalyzer</span>
-            <span class="bit active">KlocWork</span>
-            <span class="bit active">Coverity</span>
-            <span class="bit">VectorCAST</span>
+      <!-- Intern -->
+      <div class="exp-card">
+        <div class="exp-left">
+          <span class="exp-period">Jan 2023 — Jun 2023</span>
+          <div class="exp-company">Visteon<br>Corporation</div>
+          <div class="exp-role-title">Software Developer Intern</div>
+          <span class="exp-pill intern">Internship</span>
+        </div>
+        <div class="exp-right">
+          <div class="exp-chips">
+            <span class="chip chip-neutral">Display Bring-Up</span>
+            <span class="chip chip-neutral">GMSL2 SerDes</span>
+            <span class="chip chip-blue">Ahead of Schedule</span>
           </div>
-        </div>
-        <div class="reg-level">
-          <div class="level-pip filled"></div><div class="level-pip filled"></div>
-          <div class="level-pip filled"></div><div class="level-pip filled"></div>
-          <div class="level-pip filled"></div>
-          <span style="color:var(--phosphor);font-size:10px;margin-left:4px">●●●●●</span>
-        </div>
-      </div>
+          <div class="exp-accordion">
 
-      <div class="reg-row">
-        <div class="reg-addr">0x001C</div>
-        <div>
-          <div class="reg-name">Python / C++ / MATLAB</div>
-          <div class="reg-bits" style="margin-top:4px">
-            <span class="bit active">Python</span>
-            <span class="bit">C++</span>
-            <span class="bit" style="opacity:0.5">MATLAB</span>
-            <span class="bit" style="opacity:0.5">Simulink</span>
+            <div class="acc-item open">
+              <button class="acc-trigger">
+                <span class="acc-trigger-text">Display Bring-Up — <span>Triple 12.5" · GMSL2 SerDes · Ahead of Schedule</span></span>
+                <span class="acc-icon">+</span>
+              </button>
+              <div class="acc-body">
+                <ul class="acc-bullets">
+                  <li>Led <strong>triple 12.5-inch display subsystem bring-up</strong> on Infineon Traveo II: configured Maxim MAX96705/MAX9272 GMSL2 serializer/deserializer chain, I²C deserializer register init, pixel clock synchronization, and forward channel link training</li>
+                  <li>Completed ahead of schedule, <strong>unblocking downstream software integration team</strong></li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="acc-item">
+              <button class="acc-trigger">
+                <span class="acc-trigger-text">Driver Validation &amp; Static Analysis — <span>500+ MISRA Violations</span></span>
+                <span class="acc-icon">+</span>
+              </button>
+              <div class="acc-body">
+                <ul class="acc-bullets">
+                  <li>Developed and validated <strong>SPI and UART peripheral drivers</strong> at register level; traced execution with Lauterbach Trace32; decoded live CAN frame timing with Vector CANalyzer and CANoe</li>
+                  <li>Audited 3 production codebases with KlocWork and Coverity; resolved <span class="num">500+ MISRA-C violations</span> — cleared entire defect backlog before first hardware-in-loop test</li>
+                </ul>
+              </div>
+            </div>
+
           </div>
-        </div>
-        <div class="reg-level">
-          <div class="level-pip filled"></div><div class="level-pip filled"></div>
-          <div class="level-pip filled"></div>
-          <div class="level-pip" style="opacity:0.3"></div>
-          <div class="level-pip" style="opacity:0.3"></div>
-          <span style="color:var(--phosphor);font-size:10px;margin-left:4px">●●●○○</span>
         </div>
       </div>
 
@@ -1264,50 +1359,80 @@ footer span { color: var(--phosphor2); }
   </div>
 </section>
 
-<!-- EXPERIENCE -->
-<section id="experience">
+<!-- SKILLS -->
+<section id="skills">
   <div class="container">
-    <div class="sec-header reveal">
-      <span class="sec-num">0x02</span>
-      <h2 class="sec-title">WORK_HISTORY</h2>
-      <div class="sec-line"></div>
+    <div class="reveal">
+      <div class="section-eyebrow">Technical Skills</div>
+      <h2>What I <em>know deeply.</em></h2>
     </div>
-
-    <div class="exp-timeline reveal">
-      <div class="exp-entry">
-        <div class="exp-sidebar">
-          <span class="exp-period">Jul 2023 — Present</span>
-          <div class="exp-company">Visteon<br>Corporation</div>
-          <div class="exp-role">Embedded Systems Engineer</div>
-          <span class="exp-badge">Full-Time</span>
-        </div>
-        <div class="exp-main">
-          <ul class="exp-bullets">
-            <li>Firmware engineer on <strong>3 production ECU programs</strong> for Mahindra and Tata Motors; software running in <span class="metric">400,000+ production vehicles</span> — sole author of 10,000+ lines of Embedded C</li>
-            <li>Sole owner of <strong>DCM and DEM modules</strong>; implemented <span class="metric">13 UDS service handlers</span> (ISO 14229) including session control, security access, DTC read/clear, freeze-frame capture — delivered ahead of program gate, earning the <strong>Visteon Silver Award</strong></li>
-            <li>Owned full <strong>AUTOSAR CAN stack end-to-end</strong>: DBC/ARXML-based signal config for <span class="metric">200+ PDUs</span>, MCAL driver through COM layer handlers, for Classic CAN and CAN FD on 2 production ECUs</li>
-            <li>Wrote <strong>Clause 22 MDIO driver from scratch</strong> for Realtek PHY (register-map init, auto-negotiation, link-status polling); configured NXP SJA1105 L2 switch forwarding tables via SPI — 100BASE-T1 bring-up completed ahead of milestone</li>
-            <li>Designed custom <strong>UART IPC</strong> between RH850 MCU and Qualcomm Snapdragon 8155 SoC: byte-level framing, CRC validation, retransmission — delivering vehicle CAN signals into QNX Neutrino RTOS and Android Automotive HAL</li>
-            <li>ISO 26262 <strong>ASIL-D thermal safety monitor</strong>: I²C ADC sampling, multi-threshold hysteresis, PWM backlight attenuation; <span class="metric">zero thermal field escapes</span> across OEM validation</li>
-            <li>Reduced ECU quiescent current by <span class="metric">20–40%</span> on RH850 via peripheral clock gating and EcuM sleep sequence optimization</li>
-            <li>Resolved <span class="metric">500+ MISRA-C violations</span> (KlocWork, Coverity) — zero high-severity escape at integration review</li>
-          </ul>
+    <div class="skills-wrapper reveal">
+      <div class="sk-block">
+        <div class="sk-name">Embedded C <span class="sk-level">Expert</span></div>
+        <div class="sk-tags">
+          <span class="stag hi">Production firmware</span><span class="stag hi">MISRA-C</span>
+          <span class="stag hi">ISR / DMA</span><span class="stag hi">AUTOSAR</span><span class="stag">Bare-metal</span>
         </div>
       </div>
-
-      <div class="exp-entry">
-        <div class="exp-sidebar">
-          <span class="exp-period">Jan 2023 — Jun 2023</span>
-          <div class="exp-company">Visteon<br>Corporation</div>
-          <div class="exp-role">Software Developer Intern</div>
-          <span class="exp-badge">Internship</span>
+      <div class="sk-block">
+        <div class="sk-name">AUTOSAR Classic <span class="sk-level">Expert</span></div>
+        <div class="sk-tags">
+          <span class="stag hi">MCAL</span><span class="stag hi">CanIf</span><span class="stag hi">PduR</span>
+          <span class="stag hi">COM</span><span class="stag hi">DCM</span><span class="stag hi">DEM</span>
+          <span class="stag hi">EcuM</span><span class="stag">NM</span>
         </div>
-        <div class="exp-main">
-          <ul class="exp-bullets">
-            <li>Led <strong>triple 12.5-inch display subsystem bring-up</strong> on Infineon Traveo II: configured Maxim MAX96705/MAX9272 GMSL2 SerDes chain, I²C deserializer register init, pixel clock synchronization, and forward channel link training — completed ahead of schedule</li>
-            <li>Developed and validated <strong>SPI and UART peripheral drivers</strong> at register level; traced execution flow with Lauterbach Trace32; decoded CAN frame timing with Vector CANalyzer and CANoe</li>
-            <li>Audited 3 production codebases; resolved <span class="metric">500+ MISRA-C and static analysis violations</span> spanning null-pointer dereference, uninitialized variables, and implicit type conversion</li>
-          </ul>
+      </div>
+      <div class="sk-block">
+        <div class="sk-name">Communication Protocols <span class="sk-level">Expert</span></div>
+        <div class="sk-tags">
+          <span class="stag hi">CAN / CAN FD</span><span class="stag hi">SPI</span>
+          <span class="stag hi">I²C</span><span class="stag hi">UART</span>
+          <span class="stag hi">MDIO</span><span class="stag hi">100BASE-T1</span>
+          <span class="stag">LVDS</span><span class="stag">GMSL2</span>
+        </div>
+      </div>
+      <div class="sk-block">
+        <div class="sk-name">Microcontrollers <span class="sk-level">Advanced</span></div>
+        <div class="sk-tags">
+          <span class="stag hi">Renesas RH850</span><span class="stag hi">Infineon Traveo II</span>
+          <span class="stag hi">NXP MPC560xP</span><span class="stag">ARM Cortex-M7</span>
+          <span class="stag">ATmega328P</span>
+        </div>
+      </div>
+      <div class="sk-block">
+        <div class="sk-name">Functional Safety <span class="sk-level">Advanced</span></div>
+        <div class="sk-tags">
+          <span class="stag hi">ISO 26262</span><span class="stag hi">ASIL-D</span>
+          <span class="stag hi">ISO 14229 (UDS)</span><span class="stag">FMEA</span><span class="stag">Fault Handling</span>
+        </div>
+      </div>
+      <div class="sk-block">
+        <div class="sk-name">SoC / RTOS <span class="sk-level">Proficient</span></div>
+        <div class="sk-tags">
+          <span class="stag hi">Snapdragon 8155</span><span class="stag hi">QNX Neutrino</span>
+          <span class="stag">Android Automotive</span><span class="stag">OSEK</span>
+        </div>
+      </div>
+      <div class="sk-block">
+        <div class="sk-name">Debug &amp; Toolchain <span class="sk-level">Expert</span></div>
+        <div class="sk-tags">
+          <span class="stag hi">Lauterbach Trace32</span><span class="stag hi">Vector CANalyzer</span>
+          <span class="stag hi">KlocWork</span><span class="stag hi">Coverity</span>
+          <span class="stag">VectorCAST</span><span class="stag">CANoe</span>
+        </div>
+      </div>
+      <div class="sk-block">
+        <div class="sk-name">Languages <span class="sk-level">Intermediate</span></div>
+        <div class="sk-tags">
+          <span class="stag hi">Embedded C</span><span class="stag hi">Python</span>
+          <span class="stag">C++</span><span class="stag">MATLAB</span><span class="stag">Shell</span>
+        </div>
+      </div>
+      <div class="sk-block">
+        <div class="sk-name">Dev Tools <span class="sk-level">Daily</span></div>
+        <div class="sk-tags">
+          <span class="stag hi">Git</span><span class="stag hi">Jira</span>
+          <span class="stag">Multi IDE</span><span class="stag">Agile / Scrum</span>
         </div>
       </div>
     </div>
@@ -1315,142 +1440,172 @@ footer span { color: var(--phosphor2); }
 </section>
 
 <!-- PROJECTS -->
-<section id="projects" style="background: var(--surface);">
+<section id="projects">
   <div class="container">
-    <div class="sec-header reveal">
-      <span class="sec-num">0x03</span>
-      <h2 class="sec-title">PROJECT_MEMORY</h2>
-      <div class="sec-line"></div>
+    <div class="reveal">
+      <div class="section-eyebrow">Projects</div>
+      <h2>What I've <em>shipped.</em></h2>
     </div>
 
-    <div class="proj-grid reveal">
+    <div class="proj-tabs reveal">
+      <button class="tab-btn active" data-tab="production">Production ECUs</button>
+      <button class="tab-btn" data-tab="personal">Personal Projects</button>
+    </div>
+
+    <!-- Production Tab -->
+    <div class="tab-panel active" id="tab-production">
+
       <div class="proj-card">
-        <div class="proj-id">ECU_PROJ / 0x01 &nbsp;·&nbsp; TEAM_SIZE: 7</div>
+        <div class="proj-top">
+          <span class="proj-badge oem">Tata Motors</span>
+          <span class="proj-ces">CES 2026</span>
+        </div>
         <div class="proj-title">Triple 12.5-inch Cockpit HPC Controller</div>
-        <div class="proj-oem">⬡ Tata Motors Production Program</div>
-        <p class="proj-desc">High-performance cockpit controller driving three simultaneous digital displays. Owned AUTOSAR OS configuration and full CAN stack from MCAL to application layer. Sole author of Automotive Ethernet bring-up including custom MDIO driver for Realtek PHY and NXP SJA1105 L2 switch configuration over 100BASE-T1.</p>
+        <div class="proj-sub">Infineon Traveo II · Team of 7 · Automotive Ethernet</div>
+        <p class="proj-desc">High-performance cockpit ECU driving three simultaneous digital displays — showcased at CES 2026. Owned AUTOSAR OS config and full CAN stack. Sole author of Automotive Ethernet bring-up: Clause 22 MDIO driver for Realtek PHY and NXP SJA1105 L2 switch configuration over 100BASE-T1.</p>
         <div class="proj-stack">
-          <span class="tag highlight">Infineon Traveo II</span>
-          <span class="tag highlight">ARM Cortex-M7</span>
-          <span class="tag highlight">AUTOSAR Classic</span>
-          <span class="tag">CAN FD</span>
-          <span class="tag">100BASE-T1</span>
-          <span class="tag">NXP SJA1105</span>
-          <span class="tag">MDIO</span>
-          <span class="tag">SPI</span>
+          <span class="ptag core">Infineon Traveo II</span>
+          <span class="ptag core">AUTOSAR Classic</span>
+          <span class="ptag core">100BASE-T1</span>
+          <span class="ptag">NXP SJA1105</span><span class="ptag">CAN FD</span>
+          <span class="ptag">MDIO</span><span class="ptag">SPI</span>
         </div>
       </div>
 
       <div class="proj-card">
-        <div class="proj-id">ECU_PROJ / 0x02 &nbsp;·&nbsp; TEAM_SIZE: 6</div>
+        <div class="proj-top">
+          <span class="proj-badge oem">Mahindra</span>
+        </div>
         <div class="proj-title">Dual 10.25-inch Cockpit Domain Controller</div>
-        <div class="proj-oem">⬡ Mahindra Production Program</div>
-        <p class="proj-desc">Cockpit domain controller on Renesas RH850 with Qualcomm Snapdragon 8155 SoC. Designed custom UART IPC framing protocol (CRC, sequence numbering, retransmission) for real-time vehicle data delivery to QNX Neutrino and Android Automotive HAL. Sole owner of complete UDS diagnostic stack — 13 service handlers, DTC aging, OBD-II readiness flags.</p>
+        <div class="proj-sub">Renesas RH850 · Snapdragon 8155 · Team of 6</div>
+        <p class="proj-desc">Cockpit domain controller with Qualcomm Snapdragon 8155 SoC integration. Custom UART IPC protocol (CRC, sequence numbering, retransmission) for real-time vehicle data into QNX Neutrino and Android Automotive. Sole owner of 13-service UDS stack, DTC aging, OBD-II readiness — validated against Mahindra diagnostic spec.</p>
         <div class="proj-stack">
-          <span class="tag highlight">Renesas RH850</span>
-          <span class="tag highlight">Snapdragon 8155</span>
-          <span class="tag highlight">QNX Neutrino</span>
-          <span class="tag">ISO 14229 (UDS)</span>
-          <span class="tag">Android Automotive</span>
-          <span class="tag">UART IPC</span>
-          <span class="tag">DCM / DEM</span>
+          <span class="ptag core">Renesas RH850</span>
+          <span class="ptag core">Snapdragon 8155</span>
+          <span class="ptag core">QNX Neutrino</span>
+          <span class="ptag">ISO 14229 UDS</span>
+          <span class="ptag">Android Automotive</span><span class="ptag">DCM / DEM</span>
         </div>
       </div>
 
       <div class="proj-card">
-        <div class="proj-id">ECU_PROJ / 0x03 &nbsp;·&nbsp; TEAM_SIZE: 5</div>
+        <div class="proj-top">
+          <span class="proj-badge oem">Mahindra · Fuel + EV</span>
+        </div>
         <div class="proj-title">10.25-inch Standalone Infotainment ECU</div>
-        <div class="proj-oem">⬡ Fuel + EV Platform · Mahindra</div>
-        <p class="proj-desc">ISO 26262 ASIL-D thermal safety monitor with I²C ADC sampling, multi-level hysteresis thresholds (warn/derate/shutdown), and PWM backlight attenuation — zero field escapes in production validation. Maxim MAX96705/MAX9272 SerDes bring-up with unified driver covering both fuel and EV hardware variants.</p>
+        <div class="proj-sub">NXP MPC560xP · ISO 26262 ASIL-D · Team of 5</div>
+        <p class="proj-desc">ASIL-D thermal safety monitor: I²C ADC sampling, multi-threshold hysteresis (warn/derate/shutdown), PWM backlight attenuation — zero thermal field escapes in OEM validation. Maxim MAX96705/MAX9272 SerDes bring-up unified across fuel and EV hardware variants from a single driver.</p>
         <div class="proj-stack">
-          <span class="tag highlight">NXP MPC560xP</span>
-          <span class="tag highlight">ISO 26262 ASIL-D</span>
-          <span class="tag">I²C ADC</span>
-          <span class="tag">PWM Control</span>
-          <span class="tag">Maxim SerDes</span>
-          <span class="tag">GMSL2</span>
-          <span class="tag">EV Platform</span>
+          <span class="ptag core">NXP MPC560xP</span>
+          <span class="ptag core">ISO 26262 ASIL-D</span>
+          <span class="ptag">I²C ADC</span><span class="ptag">PWM Control</span>
+          <span class="ptag">GMSL2 SerDes</span><span class="ptag">EV Platform</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Personal Tab -->
+    <div class="tab-panel" id="tab-personal">
+
+      <div class="proj-card">
+        <div class="proj-top">
+          <span class="proj-badge personal">Personal · Team Lead</span>
+        </div>
+        <div class="proj-title">Braille Education Toy</div>
+        <div class="proj-sub">Arduino Mega 2560 · Team of 4 · Accessibility</div>
+        <p class="proj-desc">Interactive Braille learning device built on Arduino Mega 2560. Integrated 26 push buttons mapped to digital I/O pins representing the full Braille alphabet. Implemented audio playback via microSD module and LM386 amplifier — pre-recorded WAV files triggered on button press through a speaker. Served as team lead and sole firmware developer.</p>
+        <div class="proj-stack">
+          <span class="ptag core">Arduino Mega 2560</span>
+          <span class="ptag">Digital I/O</span><span class="ptag">microSD</span>
+          <span class="ptag">LM386 Amplifier</span><span class="ptag">WAV Playback</span>
+          <span class="ptag">Embedded C</span>
         </div>
       </div>
 
       <div class="proj-card">
-        <div class="proj-id">PERSONAL_PROJ / 0x04 &nbsp;·&nbsp; SOLO</div>
+        <div class="proj-top">
+          <span class="proj-badge personal">Personal · Embedded Dev</span>
+        </div>
         <div class="proj-title">RFID Smart Attendance System</div>
-        <div class="proj-oem">⬡ Academic · ATmega328P</div>
-        <p class="proj-desc">RFID-based attendance system with MFRC522 module over SPI, real-time cloud synchronization to Google Sheets via REST API, and embedded firmware for tag validation, CRC check, and structured data transmission. Full MCU firmware + cloud integration on a single ATmega328P.</p>
+        <div class="proj-sub">ATmega328P · SPI · Cloud Integration · Team of 4</div>
+        <p class="proj-desc">RFID-based attendance and access control on ATmega328P. MFRC522 module interfaced via SPI for user authentication. Ethernet/Wi-Fi connectivity for real-time cloud sync — attendance records logged to Google Sheets via Google Script API. Full firmware: tag validation, CRC checking, structured data transmission, and cloud synchronization.</p>
         <div class="proj-stack">
-          <span class="tag">ATmega328P</span>
-          <span class="tag">MFRC522</span>
-          <span class="tag">SPI</span>
-          <span class="tag">Wi-Fi</span>
-          <span class="tag">REST API</span>
-          <span class="tag">Google Sheets</span>
+          <span class="ptag core">ATmega328P</span>
+          <span class="ptag core">MFRC522 · SPI</span>
+          <span class="ptag">Wi-Fi / Ethernet</span>
+          <span class="ptag">Google Script API</span>
+          <span class="ptag">Google Sheets</span>
+          <span class="ptag">Arduino IDE</span>
         </div>
       </div>
+
     </div>
   </div>
 </section>
 
-<!-- CAN BUS LIVE MONITOR -->
-<section id="canbus-section">
+<!-- GITHUB -->
+<section id="github" style="background: var(--surface)">
   <div class="container">
-    <div class="sec-header reveal">
-      <span class="sec-num">0x04</span>
-      <h2 class="sec-title">LIVE_CAN_MONITOR</h2>
-      <div class="sec-line"></div>
+    <div class="gh-header reveal">
+      <div>
+        <div class="section-eyebrow">Open Source &amp; Personal Work</div>
+        <h2 style="margin-bottom:0">GitHub <em>Repositories.</em></h2>
+      </div>
+      <a href="https://github.com/senthilvel-k" target="_blank" class="gh-link">View all on GitHub →</a>
     </div>
-
-    <div id="can-viz" class="reveal">
-      <div class="can-toolbar">
-        <span>Channel: <span>CAN1</span></span>
-        <span>Baudrate: <span>500K</span></span>
-        <span>Bus load: <span id="bus-load">23%</span></span>
-        <span>Frames: <span id="frame-count">0</span></span>
-        <span style="margin-left:auto; color: var(--phosphor)">● RUNNING</span>
-      </div>
-      <div id="can-stream">
-        <div class="can-msg" style="color:var(--muted); font-size:10px; padding: 8px 16px; display:block">
-          Timestamp &nbsp;&nbsp;&nbsp;&nbsp; ID &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CH &nbsp;&nbsp; DLC &nbsp; Data &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Description
-        </div>
-      </div>
+    <div id="gh-grid" class="reveal">
+      <div class="gh-placeholder">Fetching repositories from github.com/senthilvel-k…</div>
     </div>
   </div>
 </section>
 
-<!-- CONTACT / TERMINAL -->
+<!-- CONTACT -->
 <section id="contact">
   <div class="container">
-    <div class="sec-header reveal">
-      <span class="sec-num">0x05</span>
-      <h2 class="sec-title">SERIAL_CONTACT</h2>
-      <div class="sec-line"></div>
+    <div class="reveal">
+      <div class="section-eyebrow">Contact</div>
+      <h2>Let's <em>connect.</em></h2>
     </div>
-
-    <div class="terminal reveal">
-      <div class="term-bar">
-        <div class="term-dot r"></div>
-        <div class="term-dot y"></div>
-        <div class="term-dot g"></div>
-        <span class="term-title">senthil@embedded ~ /contact</span>
+    <div class="contact-grid reveal">
+      <div>
+        <p class="contact-lead">
+          I'm an Embedded Systems Engineer at Visteon Corporation with experience building <strong>safety-critical firmware for global automotive programs</strong> including products showcased at CES 2026. Open to senior embedded roles at semiconductor and automotive technology companies.
+        </p>
+        <div class="contact-list">
+          <a href="mailto:senthil3112000@gmail.com" class="clink">
+            <span class="clink-icon">EMAIL</span>
+            <div>
+              <div class="clink-text">senthil3112000@gmail.com</div>
+              <div class="clink-sub">Best way to reach me</div>
+            </div>
+          </a>
+          <a href="https://github.com/senthilvel-k" target="_blank" class="clink">
+            <span class="clink-icon">GITHUB</span>
+            <div>
+              <div class="clink-text">github.com/senthilvel-k</div>
+              <div class="clink-sub">Personal projects &amp; open source</div>
+            </div>
+          </a>
+          <a href="https://www.linkedin.com/in/senthil-vel/" target="_blank" class="clink">
+            <span class="clink-icon">LINKEDIN</span>
+            <div>
+              <div class="clink-text">linkedin.com/in/senthil-vel</div>
+              <div class="clink-sub">Professional profile</div>
+            </div>
+          </a>
+        </div>
       </div>
-      <div class="term-body">
-        <div class="term-line comment"># Senthil Vel Kumaran — Embedded Systems Engineer</div>
-        <div class="term-line comment"># Chennai, India · Open to opportunities</div>
-        <div class="term-line">&nbsp;</div>
-        <div class="term-line cmd">whoami</div>
-        <div class="term-line out">Automotive Embedded Engineer @ Visteon Corporation</div>
-        <div class="term-line out">2+ years · 400K+ production vehicles · ASIL-D certified work</div>
-        <div class="term-line">&nbsp;</div>
-        <div class="term-line cmd">cat ./contact.conf</div>
-        <div class="term-line out link">EMAIL &nbsp;&nbsp;&nbsp;→ <a href="mailto:senthil3112000@gmail.com">senthil3112000@gmail.com</a></div>
-        <div class="term-line out link">GITHUB &nbsp;→ <a href="https://github.com/senthilvel-k" target="_blank">github.com/senthilvel-k</a></div>
-        <div class="term-line out link">LINKEDIN→ <a href="https://linkedin.com/in/senthilvkumaran" target="_blank">linkedin.com/in/senthilvkumaran</a></div>
-        <div class="term-line">&nbsp;</div>
-        <div class="term-line cmd">echo "Type a command below (try: skills, projects, contact)"</div>
-        <div class="term-output-area" id="term-output"></div>
-        <div class="term-input-row">
-          <span class="term-prompt">senthil@embedded:~$</span>
-          <input type="text" id="term-input" placeholder="type a command..." autocomplete="off" spellcheck="false">
+
+      <div class="status-card">
+        <div class="status-card-header">Current Status</div>
+        <div class="status-rows">
+          <div class="sr"><span class="sr-key">Location</span><span class="sr-val">Chennai, India</span></div>
+          <div class="sr"><span class="sr-key">Current role</span><span class="sr-val">Embedded Systems Engineer</span></div>
+          <div class="sr"><span class="sr-key">Company</span><span class="sr-val">Visteon Corporation</span></div>
+          <div class="sr"><span class="sr-key">OEM experience</span><span class="sr-val">Mahindra · Tata Motors</span></div>
+          <div class="sr"><span class="sr-key">Open to roles</span><span class="sr-val yes">Yes, actively</span></div>
+          <div class="sr"><span class="sr-key">Relocation</span><span class="sr-val">Open to discuss</span></div>
         </div>
       </div>
     </div>
@@ -1458,271 +1613,109 @@ footer span { color: var(--phosphor2); }
 </section>
 
 <footer>
-  <div class="container" style="display:flex;justify-content:space-between;width:100%;flex-wrap:wrap;gap:1rem">
-    <span>Senthil Vel Kumaran &nbsp;·&nbsp; <span>senthilvel-k</span> on GitHub</span>
-    <span>AUTOSAR · ISO 26262 · ISO 14229 · Visteon Corporation</span>
-    <span>Chennai, India &nbsp;·&nbsp; <span id="sys-time"></span></span>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-name"><strong>Senthil Vel Kumaran</strong> · Embedded Systems Engineer</div>
+      <div class="footer-meta">AUTOSAR · ISO 26262 · ISO 14229 · CES 2026 · Visteon</div>
+      <div class="footer-meta" id="footer-time"></div>
+    </div>
   </div>
 </footer>
 
 <script>
-// ─── BOOT SEQUENCE ───────────────────────────────────────────
-const bootLines = [
-  { t: 0,    cls: 'boot-addr', txt: '[0x00000000] Initializing boot ROM...' },
-  { t: 80,   cls: 'boot-ok',   txt: '[OK] MCU core frequency: 240 MHz' },
-  { t: 160,  cls: 'boot-addr', txt: '[0x00000200] Loading AUTOSAR OS...' },
-  { t: 240,  cls: 'boot-ok',   txt: '[OK] OS tasks registered: 12 BASIC, 3 EXTENDED' },
-  { t: 320,  cls: 'boot-addr', txt: '[0x00000800] Initializing CAN driver (MCAL)...' },
-  { t: 400,  cls: 'boot-ok',   txt: '[OK] CAN1: 500Kbps · CAN2: 1Mbps (FD mode)' },
-  { t: 480,  cls: 'boot-addr', txt: '[0x00001000] Starting communication stack...' },
-  { t: 560,  cls: 'boot-ok',   txt: '[OK] CanIf → PduR → COM initialized' },
-  { t: 640,  cls: 'boot-addr', txt: '[0x00002000] Loading diagnostic layer (DCM/DEM)...' },
-  { t: 720,  cls: 'boot-ok',   txt: '[OK] UDS: 13 services registered (ISO 14229)' },
-  { t: 800,  cls: 'boot-addr', txt: '[0x00004000] Ethernet subsystem init...' },
-  { t: 880,  cls: 'boot-ok',   txt: '[OK] MDIO: Realtek PHY link up · 100BASE-T1' },
-  { t: 960,  cls: 'boot-warn', txt: '[WARN] MATLAB/Simulink: module not present' },
-  { t: 1040, cls: 'boot-ok',   txt: '[OK] ISO 26262 safety monitor: ASIL-D active' },
-  { t: 1120, cls: 'boot-addr', txt: '[0xFF000000] Booting portfolio application...' },
-  { t: 1200, cls: 'boot-ok',   txt: '[OK] Senthil Vel Kumaran — Ready.' },
-];
-
-const logEl = document.getElementById('boot-log');
-const progBar = document.getElementById('boot-progress-bar');
-const overlay = document.getElementById('boot-overlay');
-
-bootLines.forEach(({ t, cls, txt }, i) => {
-  setTimeout(() => {
-    const line = document.createElement('div');
-    line.className = `boot-line ${cls}`;
-    line.textContent = txt;
-    logEl.appendChild(line);
-    logEl.scrollTop = logEl.scrollHeight;
-    progBar.style.width = `${((i + 1) / bootLines.length) * 100}%`;
-    if (i === bootLines.length - 1) {
-      setTimeout(() => overlay.classList.add('fade-out'), 600);
-      setTimeout(() => overlay.remove(), 1400);
-    }
-  }, t);
-});
-
-// ─── OSCILLOSCOPE ────────────────────────────────────────────
-const canvas = document.getElementById('osc-canvas');
-const ctx = canvas.getContext('2d');
-let oscPhase = 0;
-
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = 80;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-function drawOsc() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.strokeStyle = '#00ff41';
-  ctx.lineWidth = 1.5;
-  ctx.shadowBlur = 8;
-  ctx.shadowColor = '#00ff41';
-  ctx.beginPath();
-  const w = canvas.width, h = canvas.height;
-  for (let x = 0; x < w; x++) {
-    const t = (x / w) * Math.PI * 8 + oscPhase;
-    const y1 = Math.sin(t) * 12;
-    const y2 = Math.sin(t * 3.1) * 4;
-    const y3 = Math.sin(t * 0.5 + 1) * 8;
-    const y = h / 2 + y1 + y2 + y3;
-    x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-  }
-  ctx.stroke();
-  oscPhase += 0.04;
-  requestAnimationFrame(drawOsc);
-}
-drawOsc();
-
-// ─── HERO PANEL — LIVE DATA ───────────────────────────────────
-const hexBytes = () => Array.from({length: 8}, () =>
-  Math.floor(Math.random()*256).toString(16).toUpperCase().padStart(2,'0')
-).join(' ');
-
-const canFrames = [
-  { id:'0x1A4', dlc:8, desc:'VehicleSpeed_PDU' },
-  { id:'0x3B2', dlc:4, desc:'EngineRPM_PDU' },
-  { id:'0x7DF', dlc:8, desc:'UDS_DiagReq' },
-  { id:'0x2C1', dlc:6, desc:'BrakeCtrl_PDU' },
-  { id:'0x4F0', dlc:3, desc:'BattVoltage_PDU' },
-];
-
-setInterval(() => {
-  const f = canFrames[Math.floor(Math.random() * canFrames.length)];
-  const bytes = hexBytes().split(' ').slice(0, f.dlc).join(' ');
-  const ids = ['cf1','cf2','cf3'];
-  const el = document.getElementById(ids[Math.floor(Math.random()*3)]);
-  if (el) el.textContent = bytes;
-  const sv = document.getElementById('sleep-val');
-  if (sv) sv.textContent = (0.7 + Math.random() * 0.3).toFixed(2);
-}, 900);
-
-// ─── COUNTER ANIMATION ───────────────────────────────────────
-function animateCounter(el) {
-  const target = parseInt(el.dataset.target);
-  const suffix = el.dataset.suffix || '';
-  const isK = suffix.includes('K');
-  const displayTarget = isK ? target / 1000 : target;
-  const duration = 1800;
-  const start = performance.now();
-  function update(now) {
-    const progress = Math.min((now - start) / duration, 1);
-    const ease = 1 - Math.pow(1 - progress, 3);
-    const val = Math.round(displayTarget * ease);
-    el.textContent = val + (isK ? 'K+' : (suffix || ''));
-    if (progress < 1) requestAnimationFrame(update);
-    else el.textContent = displayTarget + (isK ? 'K+' : (suffix || ''));
-  }
-  requestAnimationFrame(update);
-}
-
-// ─── REVEAL OBSERVER ─────────────────────────────────────────
-const observer = new IntersectionObserver((entries) => {
+// ── REVEAL ────────────────────────────────────────────
+const io = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
-      e.target.classList.add('visible');
-      const counters = e.target.querySelectorAll('[data-target]');
-      counters.forEach(animateCounter);
-      observer.unobserve(e.target);
+      e.target.classList.add('in');
+      e.target.querySelectorAll('[data-count]').forEach(animCount);
+      io.unobserve(e.target);
     }
   });
-}, { threshold: 0.1 });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-// ─── CAN BUS LIVE MONITOR ────────────────────────────────────
-let frameCount = 0;
-let ts = 0;
-
-const canMsgs = [
-  { id:'0x0C0', ch:'CAN1', dlc:8, desc:'WheelSpeed_FL_FR_RL_RR' },
-  { id:'0x1A4', ch:'CAN1', dlc:8, desc:'VehicleSpeed_SteeringAngle' },
-  { id:'0x2C1', ch:'CAN1', dlc:6, desc:'BrakeCtrlPressure_PDU' },
-  { id:'0x316', ch:'CAN2', dlc:4, desc:'EngineRPM_Torque' },
-  { id:'0x3B2', ch:'CAN2', dlc:4, desc:'ThrottlePosition_MAP' },
-  { id:'0x4A0', ch:'CAN2', dlc:8, desc:'ClimateControl_HVAC_PDU' },
-  { id:'0x4F0', ch:'CAN1', dlc:3, desc:'BattVoltage_Current' },
-  { id:'0x5B1', ch:'CAN2', dlc:2, desc:'DoorStatus_Locks' },
-  { id:'0x7DF', ch:'CAN1', dlc:8, desc:'UDS_FunctionalAddr_Req' },
-  { id:'0x6A0', ch:'CAN2', dlc:5, desc:'ADAS_LaneKeep_PDU' },
-];
-
-function randomHex(n) {
-  return Array.from({length: n}, () =>
-    Math.floor(Math.random()*256).toString(16).toUpperCase().padStart(2,'0')
-  ).join(' ');
+// ── COUNTER ───────────────────────────────────────────
+function animCount(el) {
+  const t = parseInt(el.dataset.count);
+  const dur = 1400, s = performance.now();
+  const suffix = t >= 100 ? '+' : '';
+  (function tick(now) {
+    const p = Math.min((now - s) / dur, 1);
+    const v = Math.round(t * (1 - Math.pow(1 - p, 3)));
+    el.textContent = v + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+    else el.textContent = t + suffix;
+  })(s);
 }
 
-function addCanMsg() {
-  const stream = document.getElementById('can-stream');
-  const msg = canMsgs[Math.floor(Math.random() * canMsgs.length)];
-  ts += 0.8 + Math.random() * 2.5;
-  frameCount++;
-
-  const row = document.createElement('div');
-  row.className = 'can-msg';
-  row.innerHTML = `
-    <span class="can-ts">${ts.toFixed(3)}s</span>
-    <span class="can-id">${msg.id}</span>
-    <span class="can-ch">${msg.ch}</span>
-    <span class="can-dlc">[${msg.dlc}]</span>
-    <span class="can-data">${randomHex(msg.dlc)}</span>
-    <span class="can-desc">${msg.desc}</span>
-  `;
-  stream.appendChild(row);
-
-  // Keep only last 60 messages
-  const rows = stream.querySelectorAll('.can-msg');
-  if (rows.length > 60) rows[0].remove();
-  stream.scrollTop = stream.scrollHeight;
-
-  document.getElementById('frame-count').textContent = frameCount;
-  document.getElementById('bus-load').textContent = (18 + Math.random() * 15).toFixed(0) + '%';
-}
-
-setInterval(addCanMsg, 400);
-
-// ─── TERMINAL ────────────────────────────────────────────────
-const commands = {
-  skills: `
-  Embedded C (production) ●●●●●
-  AUTOSAR Classic         ●●●●●
-  CAN / CAN FD            ●●●●●
-  ISO 26262 (ASIL-D)      ●●●●○
-  UDS (ISO 14229)         ●●●●●
-  QNX Neutrino / SoC IPC  ●●●○○
-  Python / C++            ●●●○○`,
-
-  projects: `
-  [0x01] Triple 12.5" Cockpit HPC   — Tata Motors
-  [0x02] Dual 10.25" Domain Ctrl    — Mahindra
-  [0x03] Standalone Infotainment    — Mahindra EV/Fuel
-  [0x04] RFID Attendance System     — Personal`,
-
-  contact: `
-  Email    → senthil3112000@gmail.com
-  GitHub   → github.com/senthilvel-k
-  LinkedIn → linkedin.com/in/senthilvkumaran`,
-
-  awards: `
-  [SILVER] Visteon Corporation — DCM/DEM delivery ahead of program gate
-  [TOP]    #1 in C Embedded Language Training cohort`,
-
-  whoami: `  Senthil Vel Kumaran — Embedded Systems Engineer
-  Visteon Corporation (Tier-1 OEM Supplier)
-  Chennai, India · 2+ years experience
-  400,000+ production vehicles running my code`,
-
-  help: `
-  Available commands:
-    skills    — view technical skill levels
-    projects  — list production projects
-    contact   — get contact details
-    awards    — view awards
-    whoami    — about me
-    clear     — clear terminal output`,
-
-  clear: '__CLEAR__',
-};
-
-const input = document.getElementById('term-input');
-const output = document.getElementById('term-output');
-
-input.addEventListener('keydown', (e) => {
-  if (e.key !== 'Enter') return;
-  const cmd = input.value.trim().toLowerCase();
-  input.value = '';
-  if (!cmd) return;
-
-  const result = commands[cmd];
-  if (result === '__CLEAR__') {
-    output.innerHTML = '';
-  } else if (result) {
-    const pre = document.createElement('pre');
-    pre.style.cssText = 'color: #00cc33; font-size:11px; line-height:1.7; padding:4px 0; white-space: pre-wrap';
-    pre.textContent = result;
-    output.appendChild(pre);
-  } else {
-    const err = document.createElement('div');
-    err.style.cssText = 'color:#ff3b30; font-size:11px; padding:4px 0';
-    err.textContent = `command not found: ${cmd}  (try 'help')`;
-    output.appendChild(err);
-  }
-  output.scrollTop = output.scrollHeight;
+// ── ACCORDION ─────────────────────────────────────────
+document.querySelectorAll('.acc-trigger').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.acc-item');
+    const isOpen = item.classList.contains('open');
+    // Close all in same accordion
+    item.closest('.exp-accordion').querySelectorAll('.acc-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  });
 });
 
-// ─── SYSTEM CLOCK ────────────────────────────────────────────
-function updateClock() {
-  const el = document.getElementById('sys-time');
-  if (el) el.textContent = new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST';
+// ── TABS ──────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+  });
+});
+
+// ── GITHUB API ────────────────────────────────────────
+async function loadRepos() {
+  const grid = document.getElementById('gh-grid');
+  try {
+    const res = await fetch('https://api.github.com/users/senthilvel-k/repos?sort=updated&per_page=6&type=public');
+    if (!res.ok) throw new Error();
+    const repos = await res.json();
+    if (!repos.length) {
+      grid.innerHTML = `<div class="gh-placeholder">
+        No public repositories yet.<br>
+        <span style="font-size:11px;margin-top:6px;display:block">
+          Push your first project to <a href="https://github.com/senthilvel-k" target="_blank">github.com/senthilvel-k</a> — it appears here automatically.
+        </span>
+      </div>`;
+      return;
+    }
+    grid.innerHTML = repos.map(r => `
+      <a href="${r.html_url}" target="_blank" class="gh-card">
+        <div class="gh-card-top">
+          <span class="gh-name">${r.name}</span>
+          ${r.language ? `<span class="gh-lang">${r.language}</span>` : ''}
+        </div>
+        <div class="gh-desc">${r.description || 'No description provided.'}</div>
+        <div class="gh-meta">
+          <span>★ ${r.stargazers_count}</span>
+          <span>⑂ ${r.forks_count}</span>
+          ${r.updated_at ? `<span>${new Date(r.updated_at).toLocaleDateString('en-IN',{month:'short',year:'numeric'})}</span>` : ''}
+        </div>
+      </a>
+    `).join('');
+  } catch {
+    grid.innerHTML = `<div class="gh-error">
+      Could not load repositories. 
+      <a href="https://github.com/senthilvel-k" target="_blank">View on GitHub →</a>
+    </div>`;
+  }
 }
-setInterval(updateClock, 1000);
-updateClock();
+loadRepos();
+
+// ── CLOCK ─────────────────────────────────────────────
+function tick() {
+  const el = document.getElementById('footer-time');
+  if (el) el.textContent = new Date().toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata'}) + ' IST';
+}
+setInterval(tick, 1000); tick();
 </script>
 </body>
 </html>
