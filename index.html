@@ -3,198 +3,209 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Senthil Vel Kumaran — Embedded Systems Engineer</title>
+<title>Senthil Vel Kumaran — Embedded Systems Engineer II</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
 <style>
 :root{
-  --bg:       #f5f4f0;
-  --bg2:      #eeece7;
-  --surface:  #ffffff;
-  --surf2:    #f0eee9;
-  --dark:     #111116;
-  --dark2:    #1c1c24;
-  --dark3:    #252530;
-  --border:   #e0ddd6;
-  --border-d: #2a2a36;
-  --accent:   #2d2df7;
-  --accent2:  #5555ff;
-  --accent-l: #eeeeff;
-  --amber:    #c47d0e;
-  --amber-l:  #fef5e4;
-  --green:    #0f7a4a;
-  --green-l:  #eafaf3;
-  --text:     #111116;
-  --muted:    #6b6a72;
-  --muted2:   #9998a2;
-  --font:     'Bricolage Grotesque', sans-serif;
-  --mono:     'JetBrains Mono', monospace;
+  --bg:#f6f4ef;--bg2:#edeae3;--surf:#ffffff;--surf2:#f0ede6;
+  --dark:#0f0f14;--dark2:#181820;--dark3:#21212c;--dark4:#2a2a38;
+  --border:#e2dfd7;--border-d:#252535;
+  --accent:#1e3aff;--accent2:#4f6bff;--accent-l:#eaedff;
+  --amber:#c47d0e;--amber-l:#fef5e4;
+  --green:#0f7a4a;--green-l:#e8f9f0;
+  --text:#0f0f14;--muted:#6b6a72;--muted2:#9998a2;
+  --font:'Bricolage Grotesque',sans-serif;--mono:'JetBrains Mono',monospace;
 }
-
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--font);overflow-x:hidden;line-height:1.6}
-::-webkit-scrollbar{width:3px}
-::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--dark3);border-radius:2px}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--dark3)}
 a{text-decoration:none;color:inherit}
-
 .container{max-width:1080px;margin:0 auto;padding:0 2.5rem}
 
-/* ─── CURSOR ─── */
-#cursor{width:10px;height:10px;background:var(--accent);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width 0.2s,height 0.2s,background 0.2s;mix-blend-mode:multiply}
-#cursor-ring{width:32px;height:32px;border:1.5px solid var(--accent);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:transform 0.12s ease,width 0.2s,height 0.2s;opacity:0.5}
+/* ══════════════════════════════════════
+   LOADING SCREEN
+══════════════════════════════════════ */
+#loader{position:fixed;inset:0;background:var(--dark);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;transition:opacity 0.6s ease,visibility 0.6s ease}
+#loader.hide{opacity:0;visibility:hidden}
+.loader-chip{position:relative;width:80px;height:80px}
+.chip-body{width:52px;height:52px;background:var(--dark3);border:2px solid var(--accent2);position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.chip-body::after{content:'SVK';font-family:var(--mono);font-size:10px;color:var(--accent2);font-weight:500;letter-spacing:0.1em}
+/* Pins left/right */
+.chip-pin{position:absolute;width:8px;height:2px;background:var(--accent2);opacity:0.6}
+.chip-pin.l0{left:-10px;top:14px}.chip-pin.l1{left:-10px;top:22px}.chip-pin.l2{left:-10px;top:30px}.chip-pin.l3{left:-10px;top:38px}
+.chip-pin.r0{right:-10px;top:14px}.chip-pin.r1{right:-10px;top:22px}.chip-pin.r2{right:-10px;top:30px}.chip-pin.r3{right:-10px;top:38px}
+.chip-pulse{position:absolute;inset:-6px;border:1px solid var(--accent2);border-radius:8px;animation:chipring 1.6s ease-in-out infinite}
+@keyframes chipring{0%,100%{transform:scale(1);opacity:0.5}50%{transform:scale(1.12);opacity:0.15}}
+.loader-bar-wrap{width:200px;height:2px;background:var(--dark3);border-radius:2px;overflow:hidden}
+.loader-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;width:0%;transition:width 0.05s linear}
+.loader-text{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:0.2em;text-transform:uppercase}
 
-/* ─── NAV ─── */
-nav{position:fixed;top:0;width:100%;z-index:400;transition:all 0.3s}
-nav.scrolled{background:rgba(245,244,240,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);box-shadow:0 1px 20px rgba(0,0,0,0.05)}
-.nav-inner{max-width:1080px;margin:0 auto;padding:0 2.5rem;height:60px;display:flex;align-items:center;justify-content:space-between}
-.nav-logo{font-size:15px;font-weight:700;letter-spacing:-0.01em;color:var(--text)}
+/* ══════════════════════════════════════
+   CURSOR
+══════════════════════════════════════ */
+#cur{width:8px;height:8px;background:var(--accent);border-radius:50%;position:fixed;pointer-events:none;z-index:8000;transform:translate(-50%,-50%);transition:width 0.18s,height 0.18s;mix-blend-mode:multiply}
+#cur-ring{width:28px;height:28px;border:1.5px solid var(--accent);border-radius:50%;position:fixed;pointer-events:none;z-index:7999;transform:translate(-50%,-50%);opacity:0.45;transition:width 0.18s,height 0.18s}
+
+/* ══════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════ */
+.sidebar{position:fixed;left:1.8rem;bottom:0;z-index:200;display:flex;flex-direction:column;align-items:center;gap:12px}
+.sidebar::after{content:'';width:1px;height:60px;background:linear-gradient(to bottom,var(--muted2),transparent)}
+.sidebar a{display:grid;place-items:center;width:30px;height:30px;border:1px solid var(--border);border-radius:4px;color:var(--muted);transition:all 0.2s}
+.sidebar a:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+.sidebar svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ══════════════════════════════════════
+   NAV
+══════════════════════════════════════ */
+nav{position:fixed;top:0;width:100%;z-index:500;transition:all 0.3s}
+nav.scrolled{background:rgba(246,244,239,0.93);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);box-shadow:0 1px 24px rgba(0,0,0,0.05)}
+.nav-inner{max-width:1080px;margin:0 auto;padding:0 2.5rem;height:58px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-size:15px;font-weight:800;letter-spacing:-0.01em}
 .nav-logo span{color:var(--accent)}
-nav ul{list-style:none;display:flex;gap:2.5rem;align-items:center}
-nav a{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s}
+nav ul{list-style:none;display:flex;gap:2.2rem;align-items:center}
+nav a{font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;transition:color 0.2s}
 nav a:hover{color:var(--text)}
-.nav-resume-btn{border:1.5px solid var(--dark)!important;color:var(--dark)!important;padding:6px 16px;font-weight:500!important;transition:all 0.2s!important}
+.nav-resume-btn{border:1.5px solid var(--dark)!important;color:var(--dark)!important;padding:5px 14px;font-weight:500!important;transition:all 0.2s!important;border-radius:3px}
 .nav-resume-btn:hover{background:var(--dark)!important;color:#fff!important}
 
-/* ─── SOCIAL SIDEBAR ─── */
-.sidebar{position:fixed;left:2rem;bottom:0;z-index:100;display:flex;flex-direction:column;align-items:center;gap:14px}
-.sidebar::after{content:'';width:1px;height:70px;background:linear-gradient(to bottom,var(--muted),transparent);margin-top:4px}
-.sidebar a{display:grid;place-items:center;width:32px;height:32px;border:1px solid var(--border);color:var(--muted);font-size:13px;transition:all 0.2s;border-radius:4px}
-.sidebar a:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-3px)}
-.sidebar svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+/* ══════════════════════════════════════
+   HERO — tightened, no JSON card
+══════════════════════════════════════ */
+#hero{min-height:100vh;display:flex;align-items:center;padding-top:58px;position:relative;overflow:hidden}
 
-/* ─── HERO ─── */
-#hero{min-height:100vh;display:grid;grid-template-columns:1fr 380px;gap:4rem;align-items:center;padding-top:60px;position:relative;overflow:hidden}
+/* Circuit board background lines */
+.circuit-bg{position:absolute;inset:0;pointer-events:none;opacity:0.04}
 
-/* Subtle dot grid background */
-#hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(0,0,0,0.08) 1px,transparent 1px);background-size:28px 28px;opacity:0.6;pointer-events:none}
+/* Dot grid */
+#hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(15,15,20,0.12) 1px,transparent 1px);background-size:24px 24px;pointer-events:none}
 
-/* Large blurred accent blob */
-#hero::after{content:'';position:absolute;right:-100px;top:50%;transform:translateY(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(45,45,247,0.06) 0%,transparent 70%);pointer-events:none}
+/* Right large chip decoration */
+.hero-chip-deco{position:absolute;right:-40px;top:50%;transform:translateY(-50%);width:340px;height:340px;opacity:0.035;pointer-events:none}
 
-.hero-left{position:relative;z-index:1}
+.hero-inner{position:relative;z-index:1;padding:4rem 0}
 
-.hero-eyebrow{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:0.25em;text-transform:uppercase;margin-bottom:1.4rem;display:flex;align-items:center;gap:10px;opacity:0;transform:translateY(20px);animation:fadeup 0.6s 0.2s ease forwards}
-.hero-eyebrow::before{content:'';width:20px;height:1px;background:var(--accent)}
+.hero-eyebrow{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:0.25em;text-transform:uppercase;margin-bottom:1.2rem;display:flex;align-items:center;gap:10px;opacity:0;animation:fadeup 0.5s 0.8s ease forwards}
+.hero-eyebrow::before{content:'';width:18px;height:1px;background:var(--accent)}
 
-h1{font-size:clamp(3.2rem,6.5vw,5.8rem);font-weight:800;line-height:0.96;letter-spacing:-0.03em;margin-bottom:1.4rem;opacity:0;transform:translateY(20px);animation:fadeup 0.6s 0.4s ease forwards}
-h1 .name1{display:block;color:var(--text)}
-h1 .name2{display:block;color:transparent;-webkit-text-stroke:2px var(--text)}
+h1.hero-h1{font-size:clamp(3.6rem,7.5vw,7rem);font-weight:800;line-height:0.93;letter-spacing:-0.03em;margin-bottom:1.4rem;opacity:0;animation:fadeup 0.55s 1.0s ease forwards}
+h1.hero-h1 .hn1{display:block;color:var(--text)}
+h1.hero-h1 .hn2{display:block;color:transparent;-webkit-text-stroke:2.5px var(--text)}
 
-.hero-tagline{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.8rem;opacity:0;transform:translateY(20px);animation:fadeup 0.6s 0.6s ease forwards}
+.hero-role{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:1.8rem;opacity:0;animation:fadeup 0.5s 1.2s ease forwards}
 
-/* CES badge */
-.ces-link{display:inline-flex;align-items:flex-start;gap:12px;background:var(--dark);color:#fff;padding:14px 18px;margin-bottom:1.8rem;max-width:460px;border-radius:4px;transition:all 0.25s;opacity:0;transform:translateY(20px);animation:fadeup 0.6s 0.8s ease forwards;position:relative;overflow:hidden}
-.ces-link::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(45,45,247,0.15),transparent);opacity:0;transition:opacity 0.25s}
-.ces-link:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.2)}
-.ces-link:hover::before{opacity:1}
-.ces-icon{font-size:1.4rem;flex-shrink:0;line-height:1.2}
-.ces-body{}
+.ces-link{display:inline-flex;align-items:flex-start;gap:12px;background:var(--dark);color:#fff;padding:14px 18px;margin-bottom:1.8rem;max-width:500px;border-radius:4px;transition:all 0.22s;opacity:0;animation:fadeup 0.5s 1.35s ease forwards;position:relative;overflow:hidden}
+.ces-link::after{content:'';position:absolute;bottom:0;left:0;width:3px;height:100%;background:var(--accent2)}
+.ces-link:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,0.22)}
+.ces-icon{font-size:1.3rem;flex-shrink:0}
 .ces-label{font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent2);margin-bottom:3px;display:block}
-.ces-desc{font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5;font-weight:300}
-.ces-arrow{font-size:11px;color:var(--accent2);margin-left:auto;align-self:center;flex-shrink:0;transition:transform 0.2s}
-.ces-link:hover .ces-arrow{transform:translateX(3px)}
+.ces-desc{font-size:13px;color:rgba(255,255,255,0.65);line-height:1.5;font-weight:300}
+.ces-arrow{font-size:11px;color:rgba(255,255,255,0.3);margin-left:auto;align-self:center;flex-shrink:0;transition:transform 0.2s}
+.ces-link:hover .ces-arrow{transform:translateX(3px);color:var(--accent2)}
 
-.hero-desc{font-size:16px;color:var(--muted);line-height:1.7;max-width:500px;margin-bottom:2rem;font-weight:300;opacity:0;transform:translateY(20px);animation:fadeup 0.6s 1.0s ease forwards}
+.hero-desc{font-size:16px;color:var(--muted);line-height:1.72;max-width:560px;margin-bottom:2rem;font-weight:300;opacity:0;animation:fadeup 0.5s 1.5s ease forwards}
 .hero-desc strong{color:var(--text);font-weight:600}
 
-.hero-btns{display:flex;gap:12px;flex-wrap:wrap;opacity:0;transform:translateY(20px);animation:fadeup 0.6s 1.2s ease forwards}
-.btn{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:12px 24px;border:none;cursor:pointer;transition:all 0.22s;display:inline-flex;align-items:center;gap:8px;border-radius:3px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;opacity:0;animation:fadeup 0.5s 1.65s ease forwards}
+.btn{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:12px 22px;border:none;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px;border-radius:3px}
 .btn-dark{background:var(--dark);color:#fff}
 .btn-dark:hover{background:var(--dark2);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.2)}
 .btn-outline{background:transparent;color:var(--text);border:1.5px solid var(--border)}
-.btn-outline:hover{border-color:var(--dark);transform:translateY(-2px)}
+.btn-outline:hover{border-color:var(--text);transform:translateY(-2px)}
 
-/* Hero right — animated code card */
-.hero-right{position:relative;z-index:1;opacity:0;transform:translateX(30px);animation:fadein-r 0.7s 1.0s ease forwards}
-.hero-code-card{background:var(--dark);border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
-.hcc-bar{background:var(--dark2);padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border-d)}
-.hcc-dot{width:11px;height:11px;border-radius:50%}
-.hcc-dot.r{background:#ff5f57}.hcc-dot.y{background:#febc2e}.hcc-dot.g{background:#28c840}
-.hcc-title{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.3);margin-left:auto;letter-spacing:0.1em}
-.hcc-body{padding:20px;font-family:var(--mono);font-size:12px;line-height:2}
-.cc-comment{color:#4a5060}
-.cc-key{color:#a78bfa}
-.cc-str{color:#34d399}
-.cc-num{color:#f59e0b}
-.cc-bool{color:#22d3ee}
-.cc-obj{color:rgba(255,255,255,0.7)}
-.cc-bracket{color:rgba(255,255,255,0.35)}
-
-/* ─── STATS ─── */
-#stats{padding:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--dark);overflow:hidden}
+/* ══════════════════════════════════════
+   STATS (dark strip)
+══════════════════════════════════════ */
+#stats{padding:0;background:var(--dark);border-top:1px solid var(--border-d);border-bottom:1px solid var(--border-d)}
 .stats-inner{display:grid;grid-template-columns:repeat(4,1fr)}
 .stat-cell{padding:2.2rem 2rem;border-right:1px solid var(--border-d);transition:background 0.2s;position:relative;overflow:hidden}
-.stat-cell::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(45,45,247,0.08),transparent);opacity:0;transition:opacity 0.3s}
-.stat-cell:hover::before{opacity:1}
+.stat-cell::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--accent2);transition:width 0.35s ease}
+.stat-cell:hover::after{width:100%}
 .stat-cell:last-child{border-right:none}
-.snum{display:block;font-size:2.5rem;font-weight:800;color:#fff;line-height:1;margin-bottom:0.4rem;letter-spacing:-0.03em}
+.snum{display:block;font-size:2.4rem;font-weight:800;color:#fff;line-height:1;margin-bottom:0.4rem;letter-spacing:-0.03em}
 .snum span{color:var(--accent2)}
-.sdesc{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:0.12em;text-transform:uppercase}
+.sdesc{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:0.12em;text-transform:uppercase}
 
-/* ─── SECTIONS ─── */
+/* ══════════════════════════════════════
+   SECTIONS
+══════════════════════════════════════ */
 section{padding:5.5rem 0}
-.section-label{font-family:var(--mono);font-size:10px;font-weight:400;color:var(--muted2);letter-spacing:0.25em;text-transform:uppercase;margin-bottom:0.5rem;display:flex;align-items:center;gap:10px}
-.section-label::before{content:'';width:16px;height:1px;background:var(--border)}
-h2{font-size:clamp(1.9rem,3vw,2.8rem);font-weight:800;color:var(--text);letter-spacing:-0.025em;margin-bottom:0.4rem;line-height:1.1}
-h2 em{font-style:italic;color:var(--accent);font-weight:800}
-.section-sub{font-size:15px;color:var(--muted);margin-bottom:3rem;max-width:520px;font-weight:300}
+.section-label{font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:0.25em;text-transform:uppercase;margin-bottom:0.5rem;display:flex;align-items:center;gap:10px}
+.section-label::before{content:'';width:14px;height:1px;background:var(--border)}
+h2.sec-h2{font-size:clamp(1.9rem,3.2vw,2.9rem);font-weight:800;color:var(--text);letter-spacing:-0.025em;margin-bottom:0.4rem;line-height:1.1}
+h2.sec-h2 em{font-style:italic;color:var(--accent);font-weight:800}
+.sec-sub{font-size:15px;color:var(--muted);margin-bottom:3rem;font-weight:300}
 
-/* ─── TECH STACK DIAMOND ─── */
-#techstack{background:var(--dark);overflow:hidden;position:relative}
-#techstack::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:24px 24px}
-.stack-title{text-align:center;font-size:clamp(2rem,4vw,3.5rem);font-weight:800;color:#fff;letter-spacing:-0.02em;margin-bottom:3.5rem;opacity:0}
-.stack-title span{color:var(--accent2)}
+/* Circuit divider */
+.circuit-divider{width:100%;height:32px;position:relative;overflow:hidden;opacity:0.07;margin:0}
+.circuit-divider svg{width:100%;height:100%}
 
-/* Diamond grid */
-.diamond-grid{display:flex;flex-direction:column;align-items:center;gap:6px;padding-bottom:1rem}
-.diamond-row{display:flex;gap:6px;justify-content:center}
-.tech-pill{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:84px;height:84px;background:var(--dark2);border:1px solid var(--border-d);border-radius:12px;cursor:default;transition:all 0.25s;position:relative;overflow:hidden}
-.tech-pill::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,109,250,0.1),transparent);opacity:0;transition:opacity 0.25s}
-.tech-pill:hover{border-color:rgba(124,109,250,0.5);transform:translateY(-4px) scale(1.04);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
-.tech-pill:hover::before{opacity:1}
-.tech-pill img{width:30px;height:30px;object-fit:contain;filter:brightness(0.9);transition:filter 0.25s}
-.tech-pill:hover img{filter:brightness(1.1)}
-.tech-pill span{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,0.4);text-align:center;letter-spacing:0.04em;transition:color 0.25s}
-.tech-pill:hover span{color:rgba(255,255,255,0.8)}
+/* ══════════════════════════════════════
+   EXPERIENCE
+══════════════════════════════════════ */
+#experience{background:var(--surf);position:relative;overflow:hidden}
+/* Faint chip watermark */
+#experience::after{content:'';position:absolute;right:-60px;bottom:-60px;width:300px;height:300px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='25' y='25' width='50' height='50' rx='4' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Crect x='30' y='30' width='40' height='40' rx='2' fill='none' stroke='%23000' stroke-width='1'/%3E%3Cline x1='15' y1='35' x2='25' y2='35' stroke='%23000' stroke-width='1.5'/%3E%3Cline x1='15' y1='43' x2='25' y2='43' stroke='%23000' stroke-width='1.5'/%3E%3Cline x1='15' y1='51' x2='25' y2='51' stroke='%23000' stroke-width='1.5'/%3E%3Cline x1='15' y1='59' x2='25' y2='59' stroke='%23000' stroke-width='1.5'/%3E%3Cline x1='75' y1='35' x2='85' y2='35' stroke='%23000' stroke-width='1.5'/%3E%3Cline x1='75' y1='43' x2='85' y2='43' stroke='%23000' stroke-width='1.5'/%3E%3Cline x1='75' y1='51' x2='85' y2='51' stroke='%23000' stroke-width='1.5'/%3E%3Cline x1='75' y1='59' x2='85' y2='59' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat center;background-size:contain;opacity:0.03;pointer-events:none}
 
-/* ─── EXPERIENCE ─── */
-#experience{background:var(--surface)}
-.exp-layout{display:grid;grid-template-columns:220px 1fr;gap:4rem}
-
-/* Left timeline */
+.exp-layout{display:grid;grid-template-columns:210px 1fr;gap:3.5rem}
 .exp-timeline-nav{}
-.exp-nav-item{display:flex;flex-direction:column;padding:1.2rem 1.4rem;border-left:2px solid var(--border);cursor:pointer;transition:all 0.2s;margin-bottom:2px}
+.exp-nav-item{padding:1.1rem 1.3rem;border-left:2px solid var(--border);cursor:pointer;transition:all 0.2s;margin-bottom:2px}
 .exp-nav-item.active{border-left-color:var(--accent);background:var(--accent-l)}
-.exp-nav-item:hover:not(.active){border-left-color:var(--border);background:var(--surf2)}
-.enav-period{font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:0.05em;margin-bottom:3px}
-.enav-company{font-size:14px;font-weight:600;color:var(--text);line-height:1.2}
-.enav-role{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.05em;margin-top:2px}
-.enav-badge{display:inline-block;margin-top:6px;font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border-radius:2px;width:fit-content}
+.exp-nav-item:hover:not(.active){background:var(--surf2)}
+.enav-period{font-family:var(--mono);font-size:10px;color:var(--muted2);margin-bottom:3px}
+.enav-company{font-size:14px;font-weight:700;color:var(--text);line-height:1.2}
+.enav-role{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px}
+.enav-badge{display:inline-block;margin-top:6px;font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:2px 8px;border-radius:2px}
 .enav-badge.current{background:var(--green-l);color:var(--green);border:1px solid rgba(15,122,74,0.2)}
 .enav-badge.intern{background:var(--surf2);color:var(--muted);border:1px solid var(--border)}
 
-/* Right content */
-.exp-content-panels{}
-.exp-panel{display:none}
-.exp-panel.active{display:block}
-
-.exp-highlights{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:2rem}
-.exp-hl{background:var(--bg);border:1px solid var(--border);padding:1rem 1.2rem;border-radius:4px;transition:all 0.2s}
-.exp-hl:hover{border-color:var(--accent);background:var(--accent-l)}
-.exp-hl-num{font-size:1.4rem;font-weight:800;color:var(--accent);font-family:var(--mono);letter-spacing:-0.02em;line-height:1;margin-bottom:3px}
+.exp-panel{display:none}.exp-panel.active{display:block}
+.exp-highlights{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.8rem}
+.exp-hl{background:var(--bg);border:1px solid var(--border);padding:1rem 1.2rem;border-radius:4px;transition:all 0.2s;position:relative;overflow:hidden}
+.exp-hl::before{content:'';position:absolute;top:0;left:0;width:3px;height:0;background:var(--accent);transition:height 0.3s ease}
+.exp-hl:hover::before{height:100%}
+.exp-hl:hover{border-color:var(--accent);background:var(--accent-l);transform:translateY(-2px)}
+.exp-hl-num{font-size:1.3rem;font-weight:800;color:var(--accent);font-family:var(--mono);letter-spacing:-0.02em;line-height:1;margin-bottom:3px}
 .exp-hl-label{font-size:11px;color:var(--muted);font-weight:400}
 
 .exp-deliverables{display:flex;flex-direction:column;gap:8px}
-.exp-item{display:flex;gap:14px;padding:1rem 1.2rem;border:1px solid var(--border);background:var(--bg);border-radius:4px;transition:all 0.2s;cursor:default}
-.exp-item:hover{border-color:var(--border);background:var(--surface);box-shadow:0 2px 12px rgba(0,0,0,0.05);transform:translateX(3px)}
+.exp-item{display:flex;gap:14px;padding:1rem 1.2rem;border:1px solid var(--border);background:var(--bg);border-radius:4px;transition:all 0.2s}
+.exp-item:hover{border-color:var(--border);background:var(--surf);box-shadow:0 3px 16px rgba(0,0,0,0.06);transform:translateX(4px)}
 .exp-item-icon{font-size:1.2rem;flex-shrink:0;margin-top:1px}
-.exp-item-body{}
 .exp-item-title{font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:3px}
-.exp-item-desc{font-size:12.5px;color:var(--muted);line-height:1.6;font-weight:300}
+.exp-item-desc{font-size:12.5px;color:var(--muted);line-height:1.65;font-weight:300}
 .exp-item-desc strong{color:var(--text);font-weight:500}
 
-/* ─── PROJECTS ─── */
+/* ══════════════════════════════════════
+   TECH STACK — dark, diamond grid
+══════════════════════════════════════ */
+#techstack{background:var(--dark);position:relative;overflow:hidden;padding:5.5rem 0}
+#techstack::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:26px 26px;pointer-events:none}
+.stack-heading{text-align:center;margin-bottom:3.5rem}
+.stack-heading h2{font-size:clamp(2.2rem,5vw,4rem);font-weight:800;color:#fff;letter-spacing:-0.03em}
+.stack-heading h2 span{color:var(--accent2)}
+.diamond-grid{display:flex;flex-direction:column;align-items:center;gap:8px}
+.diamond-row{display:flex;gap:8px;justify-content:center}
+
+/* Tech pill — uses devicon or SVG */
+.tech-pill{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:88px;height:88px;background:var(--dark2);border:1px solid var(--border-d);border-radius:14px;cursor:default;transition:all 0.25s;position:relative;overflow:hidden;opacity:0;transform:scale(0.85) translateY(12px)}
+.tech-pill.in{opacity:1;transform:scale(1) translateY(0)}
+.tech-pill::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(79,107,255,0.12),transparent);opacity:0;transition:opacity 0.22s}
+.tech-pill:hover{border-color:rgba(79,107,255,0.5);transform:translateY(-5px) scale(1.05);box-shadow:0 10px 28px rgba(0,0,0,0.35)}
+.tech-pill:hover::before{opacity:1}
+
+/* Icon inside pill */
+.tp-icon{width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:22px;line-height:1}
+.tp-icon i{font-size:28px;transition:opacity 0.2s}
+.tp-icon svg{width:28px;height:28px}
+.tp-label{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,0.4);text-align:center;letter-spacing:0.03em;transition:color 0.22s;padding:0 4px;line-height:1.2}
+.tech-pill:hover .tp-label{color:rgba(255,255,255,0.85)}
+
+/* ══════════════════════════════════════
+   PROJECTS
+══════════════════════════════════════ */
 #projects{background:var(--bg2)}
 .proj-tabs{display:flex;gap:2px;margin-bottom:2rem;border-bottom:1px solid var(--border)}
 .tab-btn{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:10px 20px;background:transparent;border:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s}
@@ -202,128 +213,188 @@ h2 em{font-style:italic;color:var(--accent);font-weight:800}
 .tab-btn:hover:not(.active){color:var(--text)}
 .tab-panel{display:none}
 .tab-panel.active{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem}
-
-/* Project card */
-.proj-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;transition:all 0.25s;display:flex;flex-direction:column}
-.proj-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.1);border-color:var(--border)}
-.proj-img{width:100%;height:160px;object-fit:cover;display:block;filter:saturate(0.85);transition:filter 0.3s}
-.proj-card:hover .proj-img{filter:saturate(1)}
+.proj-card{background:var(--surf);border:1px solid var(--border);border-radius:6px;overflow:hidden;transition:all 0.25s;display:flex;flex-direction:column}
+.proj-card:hover{transform:translateY(-5px);box-shadow:0 14px 40px rgba(0,0,0,0.1)}
+.proj-img{width:100%;height:155px;object-fit:cover;display:block;filter:saturate(0.8) brightness(0.95);transition:filter 0.3s}
+.proj-card:hover .proj-img{filter:saturate(1) brightness(1)}
 .proj-body{padding:1.4rem;flex:1;display:flex;flex-direction:column}
 .proj-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem}
-.proj-badge{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;border-radius:2px;border:1px solid;font-weight:500}
-.proj-badge.oem{color:var(--accent);background:var(--accent-l);border-color:rgba(45,45,247,0.2)}
+.proj-badge{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;padding:3px 8px;border-radius:2px;border:1px solid}
+.proj-badge.oem{color:var(--accent);background:var(--accent-l);border-color:rgba(30,58,255,0.2)}
 .proj-badge.personal{color:var(--muted);background:var(--surf2);border-color:var(--border)}
-.proj-ces{font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;font-weight:600;display:flex;align-items:center;gap:3px}
+.proj-ces{font-family:var(--mono);font-size:9px;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;font-weight:600}
 .proj-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;line-height:1.25}
 .proj-meta{font-family:var(--mono);font-size:10px;color:var(--muted2);margin-bottom:0.7rem;letter-spacing:0.04em}
 .proj-desc{font-size:12.5px;color:var(--muted);line-height:1.65;margin-bottom:1rem;font-weight:300;flex:1}
 .proj-stack{display:flex;flex-wrap:wrap;gap:4px}
 .ptag{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:2px;background:var(--bg);border:1px solid var(--border);color:var(--muted2)}
-.ptag.hi{background:var(--dark);color:rgba(255,255,255,0.7);border-color:var(--dark)}
+.ptag.hi{background:var(--dark);color:rgba(255,255,255,0.65);border-color:var(--dark)}
 
-/* ─── GITHUB ─── */
+/* ══════════════════════════════════════
+   GITHUB
+══════════════════════════════════════ */
 #github-section{background:var(--dark);position:relative;overflow:hidden}
-#github-section::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:28px 28px}
-.gh-header-wrap{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2rem;position:relative;z-index:1}
-.gh-section-label{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:0.4rem;display:flex;align-items:center;gap:10px}
-.gh-section-label::before{content:'';width:14px;height:1px;background:rgba(255,255,255,0.2)}
+#github-section::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.022) 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
+.gh-hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2rem;position:relative;z-index:1}
+.gh-lbl{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.25);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:0.4rem;display:flex;align-items:center;gap:8px}
+.gh-lbl::before{content:'';width:12px;height:1px;background:rgba(255,255,255,0.2)}
 .gh-h2{font-size:clamp(1.8rem,2.8vw,2.6rem);font-weight:800;color:#fff;letter-spacing:-0.025em;line-height:1.1}
 .gh-h2 em{font-style:italic;color:var(--accent2)}
-.gh-view-all{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:0.08em;transition:color 0.2s;display:flex;align-items:center;gap:5px}
-.gh-view-all:hover{color:var(--accent2)}
+.gh-all-link{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.25);letter-spacing:0.06em;transition:color 0.2s;display:flex;align-items:center;gap:5px}
+.gh-all-link:hover{color:var(--accent2)}
 #gh-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border-d);border:1px solid var(--border-d);border-radius:6px;overflow:hidden;position:relative;z-index:1}
 .gh-card{background:var(--dark2);padding:1.4rem;text-decoration:none;color:inherit;transition:background 0.2s;display:block}
 .gh-card:hover{background:var(--dark3)}
 .gh-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem}
 .gh-name{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--accent2);letter-spacing:0.02em}
-.gh-lang{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,0.25);padding:2px 6px;border:1px solid var(--border-d);border-radius:2px}
-.gh-desc{font-size:12px;color:rgba(255,255,255,0.35);line-height:1.55;margin-bottom:0.8rem;font-weight:300}
-.gh-meta{display:flex;gap:1rem;font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.2)}
-.gh-state{grid-column:1/-1;padding:3rem 2rem;text-align:center;font-family:var(--mono);font-size:12px;color:rgba(255,255,255,0.25)}
+.gh-lang{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,0.2);padding:2px 6px;border:1px solid var(--border-d);border-radius:2px}
+.gh-desc{font-size:12px;color:rgba(255,255,255,0.3);line-height:1.55;margin-bottom:0.8rem;font-weight:300}
+.gh-meta{display:flex;gap:1rem;font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.18)}
+.gh-state{grid-column:1/-1;padding:3rem 2rem;text-align:center;font-family:var(--mono);font-size:12px;color:rgba(255,255,255,0.2)}
 .gh-state a{color:var(--accent2)}
 
-/* ─── CONTACT ─── */
-#contact{background:var(--surface)}
+/* ══════════════════════════════════════
+   BLOGS SECTION
+══════════════════════════════════════ */
+#blogs{background:var(--surf);position:relative;overflow:hidden}
+/* Circuit trace decoration */
+#blogs::before{content:'';position:absolute;left:-60px;top:50%;transform:translateY(-50%);width:180px;height:180px;opacity:0.03;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Ccircle cx='60' cy='60' r='55' fill='none' stroke='%23000' stroke-width='1'/%3E%3Ccircle cx='60' cy='60' r='40' fill='none' stroke='%23000' stroke-width='1'/%3E%3Ccircle cx='60' cy='60' r='8' fill='none' stroke='%23000' stroke-width='2'/%3E%3Cline x1='60' y1='5' x2='60' y2='20' stroke='%23000' stroke-width='1.5'/%3E%3Cline x1='60' y1='100' x2='60' y2='115' stroke='%23000' stroke-width='1.5'/%3E%3Cline x1='5' y1='60' x2='20' y2='60' stroke='%23000' stroke-width='1.5'/%3E%3Cline x1='100' y1='60' x2='115' y2='60' stroke='%23000' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat center;background-size:contain;pointer-events:none}
+
+.blogs-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2.5rem}
+.blog-add-hint{font-family:var(--mono);font-size:10px;color:var(--muted2);letter-spacing:0.06em}
+
+.blogs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-bottom:2rem}
+.blog-card{background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:1.4rem;transition:all 0.22s;display:block;position:relative;overflow:hidden}
+.blog-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transform:scaleX(0);transform-origin:left;transition:transform 0.3s ease}
+.blog-card:hover::before{transform:scaleX(1)}
+.blog-card:hover{border-color:var(--accent);background:var(--surf);transform:translateY(-4px);box-shadow:0 8px 28px rgba(0,0,0,0.08)}
+.blog-card.coming-soon{border-style:dashed;cursor:default;opacity:0.5}
+.blog-card.coming-soon:hover{transform:none;box-shadow:none;border-color:var(--border)}
+.blog-card.coming-soon::before{display:none}
+.blog-tag{font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;padding:3px 8px;border-radius:2px;border:1px solid;color:var(--accent);background:var(--accent-l);border-color:rgba(30,58,255,0.2);display:inline-block;margin-bottom:0.7rem}
+.blog-tag.cs{color:var(--green);background:var(--green-l);border-color:rgba(15,122,74,0.2)}
+.blog-tag.upcoming{color:var(--muted2);background:var(--surf2);border-color:var(--border)}
+.blog-date{font-family:var(--mono);font-size:10px;color:var(--muted2);margin-bottom:0.4rem}
+.blog-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:0.5rem;line-height:1.3}
+.blog-desc{font-size:12px;color:var(--muted);line-height:1.6;font-weight:300}
+.blog-arrow{position:absolute;bottom:1rem;right:1.2rem;font-size:14px;color:var(--muted2);transition:transform 0.2s,color 0.2s}
+.blog-card:hover .blog-arrow{transform:translate(3px,-3px);color:var(--accent)}
+
+/* How-to box */
+.blog-howto{background:var(--dark);border-radius:6px;padding:1.6rem 2rem;margin-top:2rem}
+.howto-title{font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.howto-title::before{content:'📋'}
+.howto-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.howto-step{}
+.howto-num{font-family:var(--mono);font-size:10px;color:var(--accent2);letter-spacing:0.1em;margin-bottom:4px}
+.howto-text{font-size:12px;color:rgba(255,255,255,0.45);line-height:1.55;font-weight:300}
+.howto-code{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.6);background:var(--dark3);padding:2px 6px;border-radius:2px;display:inline-block;margin-top:3px}
+
+/* ══════════════════════════════════════
+   CONTACT
+══════════════════════════════════════ */
+#contact{background:var(--bg2)}
 .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start}
 .contact-intro{font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:2rem;font-weight:300}
 .contact-intro strong{color:var(--text);font-weight:600}
 .contact-links{display:flex;flex-direction:column;gap:10px}
-.clink{display:flex;align-items:center;gap:16px;padding:14px 18px;border:1px solid var(--border);border-radius:4px;background:var(--bg);transition:all 0.2s}
-.clink:hover{border-color:var(--accent);background:var(--surface);transform:translateX(4px);box-shadow:0 2px 16px rgba(45,45,247,0.08)}
-.clink-tag{font-family:var(--mono);font-size:10px;color:var(--accent);font-weight:500;letter-spacing:0.1em;min-width:70px}
+.clink{display:flex;align-items:center;gap:16px;padding:13px 16px;border:1px solid var(--border);border-radius:4px;background:var(--surf);transition:all 0.2s}
+.clink:hover{border-color:var(--accent);background:var(--accent-l);transform:translateX(4px)}
+.clink-tag{font-family:var(--mono);font-size:10px;color:var(--accent);font-weight:500;letter-spacing:0.1em;min-width:68px}
 .clink-text{font-size:13px;font-weight:500;color:var(--text)}
 .clink-sub{font-family:var(--mono);font-size:10px;color:var(--muted2);margin-top:1px}
-
-/* Status card (dark) */
-.status-card{background:var(--dark);border-radius:6px;overflow:hidden}
-.sc-header{padding:14px 20px;background:var(--dark2);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-d)}
-.sc-header-title{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:0.15em;text-transform:uppercase}
-.sc-online{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;color:#34d399}
-.sc-online::before{content:'';width:6px;height:6px;border-radius:50%;background:#34d399;animation:pulse 2s infinite}
-@keyframes pulse{50%{opacity:0.3}}
+.sc{background:var(--dark);border-radius:6px;overflow:hidden}
+.sc-hdr{padding:14px 20px;background:var(--dark2);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-d)}
+.sc-hdr-t{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:0.15em;text-transform:uppercase}
+.sc-live{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;color:#34d399}
+.sc-live::before{content:'';width:6px;height:6px;border-radius:50%;background:#34d399;animation:livepulse 2s infinite}
+@keyframes livepulse{50%{opacity:0.3}}
 .sc-rows{padding:4px 0}
-.sc-row{display:flex;justify-content:space-between;padding:10px 20px;border-bottom:1px solid var(--border-d)}
+.sc-row{display:flex;justify-content:space-between;padding:9px 20px;border-bottom:1px solid var(--border-d)}
 .sc-row:last-child{border-bottom:none}
-.sc-k{font-size:13px;color:rgba(255,255,255,0.3);font-weight:300}
-.sc-v{font-size:13px;color:rgba(255,255,255,0.8);font-weight:500;text-align:right}
+.sc-k{font-size:13px;color:rgba(255,255,255,0.28);font-weight:300}
+.sc-v{font-size:13px;color:rgba(255,255,255,0.75);font-weight:500;text-align:right}
 .sc-v.yes{color:#34d399}
 
-/* ─── FOOTER ─── */
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
 footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 0}
 .footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
-.footer-name{font-size:13px;color:rgba(255,255,255,0.4)}
-.footer-name strong{color:rgba(255,255,255,0.8)}
+.footer-name{font-size:13px;color:rgba(255,255,255,0.35)}
+.footer-name strong{color:rgba(255,255,255,0.75)}
 .footer-links{display:flex;gap:2rem}
-.footer-links a{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s}
+.footer-links a{font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;text-transform:uppercase;transition:color 0.2s}
 .footer-links a:hover{color:var(--accent2)}
 
-/* ─── ANIMATIONS ─── */
+/* ══════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════ */
 @keyframes fadeup{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
 @keyframes fadein-r{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
 
-.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity 0.55s ease,transform 0.55s ease}
 .reveal.in{opacity:1;transform:none}
-.reveal-r{opacity:0;transform:translateX(24px);transition:opacity 0.6s ease,transform 0.6s ease}
+.reveal-l{opacity:0;transform:translateX(-26px);transition:opacity 0.55s ease,transform 0.55s ease}
+.reveal-l.in{opacity:1;transform:none}
+.reveal-r{opacity:0;transform:translateX(26px);transition:opacity 0.55s ease,transform 0.55s ease}
 .reveal-r.in{opacity:1;transform:none}
-.d1{transition-delay:0.1s}.d2{transition-delay:0.2s}.d3{transition-delay:0.3s}.d4{transition-delay:0.4s}
+.reveal-scale{opacity:0;transform:scale(0.93);transition:opacity 0.5s ease,transform 0.5s ease}
+.reveal-scale.in{opacity:1;transform:scale(1)}
+.d1{transition-delay:0.1s}.d2{transition-delay:0.2s}.d3{transition-delay:0.3s}.d4{transition-delay:0.4s}.d5{transition-delay:0.5s}
 
-/* Tech pill entrance */
-.tech-pill{opacity:0;transform:translateY(20px) scale(0.9);transition:opacity 0.4s ease,transform 0.4s ease,border-color 0.25s,box-shadow 0.25s}
-.tech-pill.in{opacity:1;transform:translateY(0) scale(1)}
-
-/* ─── RESPONSIVE ─── */
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
 @media(max-width:960px){
-  #hero{grid-template-columns:1fr}
-  .hero-right{display:none}
-  .stats-inner{grid-template-columns:repeat(2,1fr)}
   .exp-layout{grid-template-columns:1fr}
   .tab-panel.active{grid-template-columns:1fr}
   #gh-grid{grid-template-columns:1fr}
-  .contact-grid{grid-template-columns:1fr;gap:2.5rem}
+  .blogs-grid{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:1fr;gap:2rem}
+  .stats-inner{grid-template-columns:repeat(2,1fr)}
   nav ul{display:none}
   .sidebar{display:none}
+  .howto-steps{grid-template-columns:1fr}
 }
 @media(max-width:600px){
   .stats-inner{grid-template-columns:1fr 1fr}
-  h1{font-size:2.8rem}
-  .section{padding:4rem 0}
+  .exp-highlights{grid-template-columns:1fr 1fr}
+  h1.hero-h1{font-size:3rem}
+  section{padding:4rem 0}
+  .blogs-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
+<!-- ═══ LOADER ═══ -->
+<div id="loader">
+  <div class="loader-chip">
+    <div class="chip-pulse"></div>
+    <div class="chip-body"></div>
+    <div class="chip-pin l0"></div><div class="chip-pin l1"></div>
+    <div class="chip-pin l2"></div><div class="chip-pin l3"></div>
+    <div class="chip-pin r0"></div><div class="chip-pin r1"></div>
+    <div class="chip-pin r2"></div><div class="chip-pin r3"></div>
+  </div>
+  <div class="loader-bar-wrap"><div class="loader-bar" id="lbar"></div></div>
+  <div class="loader-text" id="loader-txt">Initialising...</div>
+</div>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-  <a href="https://github.com/senthilvel-k" target="_blank" aria-label="GitHub">
+  <a href="https://github.com/senthilvel-k" target="_blank">
     <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
   </a>
-  <a href="https://www.linkedin.com/in/senthil-vel/" target="_blank" aria-label="LinkedIn">
+  <a href="https://www.linkedin.com/in/senthil-vel/" target="_blank">
     <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
   </a>
-  <a href="mailto:senthil3112000@gmail.com" aria-label="Email">
+  <a href="mailto:senthil3112000@gmail.com">
     <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
   </a>
 </div>
@@ -336,72 +407,58 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
       <li><a href="#experience">Experience</a></li>
       <li><a href="#techstack">Stack</a></li>
       <li><a href="#projects">Projects</a></li>
+      <li><a href="#blogs">Blogs</a></li>
       <li><a href="#github-section">GitHub</a></li>
       <li><a href="#contact">Contact</a></li>
-      <li>
-        <a href="https://github.com/senthilvel-k/senthilvel-k.github.io/blob/main/Senthil_Vel_K_Resume.pdf"
-           target="_blank" class="nav-resume-btn">Resume ↗</a>
-      </li>
+      <li><a href="https://github.com/senthilvel-k/senthilvel-k.github.io/blob/main/Senthil_Vel_K_Resume.pdf" target="_blank" class="nav-resume-btn">Resume ↗</a></li>
     </ul>
   </div>
 </nav>
 
 <!-- HERO -->
 <section id="hero">
-  <div class="container" style="display:contents">
-    <div style="padding:0 2.5rem;max-width:1080px;margin:0 auto;display:contents">
+  <!-- SVG circuit board watermark right -->
+  <div class="hero-chip-deco">
+    <svg viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="90" y="90" width="160" height="160" rx="8" stroke="black" stroke-width="3"/>
+      <rect x="110" y="110" width="120" height="120" rx="4" stroke="black" stroke-width="2"/>
+      <rect x="130" y="130" width="80" height="80" rx="3" fill="black" opacity="0.15"/>
+      <line x1="40" y1="120" x2="90" y2="120" stroke="black" stroke-width="3"/><line x1="40" y1="145" x2="90" y2="145" stroke="black" stroke-width="3"/><line x1="40" y1="170" x2="90" y2="170" stroke="black" stroke-width="3"/><line x1="40" y1="195" x2="90" y2="195" stroke="black" stroke-width="3"/><line x1="40" y1="220" x2="90" y2="220" stroke="black" stroke-width="3"/>
+      <line x1="250" y1="120" x2="300" y2="120" stroke="black" stroke-width="3"/><line x1="250" y1="145" x2="300" y2="145" stroke="black" stroke-width="3"/><line x1="250" y1="170" x2="300" y2="170" stroke="black" stroke-width="3"/><line x1="250" y1="195" x2="300" y2="195" stroke="black" stroke-width="3"/><line x1="250" y1="220" x2="300" y2="220" stroke="black" stroke-width="3"/>
+      <line x1="120" y1="40" x2="120" y2="90" stroke="black" stroke-width="3"/><line x1="145" y1="40" x2="145" y2="90" stroke="black" stroke-width="3"/><line x1="170" y1="40" x2="170" y2="90" stroke="black" stroke-width="3"/><line x1="195" y1="40" x2="195" y2="90" stroke="black" stroke-width="3"/><line x1="220" y1="40" x2="220" y2="90" stroke="black" stroke-width="3"/>
+      <line x1="120" y1="250" x2="120" y2="300" stroke="black" stroke-width="3"/><line x1="145" y1="250" x2="145" y2="300" stroke="black" stroke-width="3"/><line x1="170" y1="250" x2="170" y2="300" stroke="black" stroke-width="3"/><line x1="195" y1="250" x2="195" y2="300" stroke="black" stroke-width="3"/><line x1="220" y1="250" x2="220" y2="300" stroke="black" stroke-width="3"/>
+    </svg>
+  </div>
 
-      <div class="hero-left" style="padding:0 2.5rem">
-        <div class="hero-eyebrow">Embedded Systems Engineer · Visteon Corporation</div>
-        <h1><span class="name1">Senthil Vel</span><span class="name2">Kumaran.</span></h1>
-        <div class="hero-tagline">Automotive ECU Firmware &nbsp;·&nbsp; Chennai, India</div>
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">Embedded Software Engineer II · Visteon Corporation</div>
+      <h1 class="hero-h1">
+        <span class="hn1">Senthil Vel</span>
+        <span class="hn2">Kumaran.</span>
+      </h1>
+      <div class="hero-role">Automotive ECU Firmware &nbsp;·&nbsp; Chennai, India</div>
 
-        <a href="https://www.linkedin.com/posts/visteon_ces2026-activity-7414834485546074112-ukkf/"
-           target="_blank" class="ces-link">
-          <div class="ces-icon">🏆</div>
-          <div class="ces-body">
-            <span class="ces-label">CES 2026 · Las Vegas</span>
-            <div class="ces-desc">Contributed firmware to Visteon cockpit displays showcased to global OEMs — triple-screen &amp; pillar-to-pillar production systems</div>
-          </div>
-          <span class="ces-arrow">→</span>
-        </a>
-
-        <p class="hero-desc">
-          Safety-critical firmware engineer building cockpit ECUs for
-          <strong>Mahindra &amp; Tata Motors</strong> production vehicles.
-          Specialist in <strong>AUTOSAR Classic</strong>, ISO 26262 (ASIL-D),
-          and Qualcomm Snapdragon SoC integration.
-        </p>
-
-        <div class="hero-btns">
-          <a href="https://github.com/senthilvel-k" target="_blank" class="btn btn-dark">↗ GitHub</a>
-          <a href="https://github.com/senthilvel-k/senthilvel-k.github.io/blob/main/Senthil_Vel_K_Resume.pdf"
-             target="_blank" class="btn btn-outline">Download Resume</a>
+      <a href="https://www.linkedin.com/posts/visteon_ces2026-activity-7414834485546074112-ukkf/" target="_blank" class="ces-link">
+        <div class="ces-icon">🏆</div>
+        <div>
+          <span class="ces-label">CES 2026 · Las Vegas</span>
+          <div class="ces-desc">Contributed firmware to Visteon cockpit displays showcased to global OEMs — triple-screen &amp; pillar-to-pillar production systems</div>
         </div>
-      </div>
+        <span class="ces-arrow">→</span>
+      </a>
 
-      <!-- Code card -->
-      <div class="hero-right" style="padding-right:2.5rem">
-        <div class="hero-code-card">
-          <div class="hcc-bar">
-            <div class="hcc-dot r"></div><div class="hcc-dot y"></div><div class="hcc-dot g"></div>
-            <span class="hcc-title">engineer.json</span>
-          </div>
-          <div class="hcc-body">
-            <div><span class="cc-bracket">{</span></div>
-            <div>&nbsp;&nbsp;<span class="cc-key">"name"</span><span class="cc-obj">: </span><span class="cc-str">"Senthil Vel Kumaran"</span><span class="cc-obj">,</span></div>
-            <div>&nbsp;&nbsp;<span class="cc-key">"role"</span><span class="cc-obj">: </span><span class="cc-str">"Embedded Systems Engineer"</span><span class="cc-obj">,</span></div>
-            <div>&nbsp;&nbsp;<span class="cc-key">"company"</span><span class="cc-obj">: </span><span class="cc-str">"Visteon Corporation"</span><span class="cc-obj">,</span></div>
-            <div>&nbsp;&nbsp;<span class="cc-key">"oem_programs"</span><span class="cc-obj">: [</span><span class="cc-str">"Mahindra"</span><span class="cc-obj">, </span><span class="cc-str">"Tata Motors"</span><span class="cc-obj">],</span></div>
-            <div>&nbsp;&nbsp;<span class="cc-key">"safety_level"</span><span class="cc-obj">: </span><span class="cc-str">"ISO 26262 ASIL-D"</span><span class="cc-obj">,</span></div>
-            <div>&nbsp;&nbsp;<span class="cc-key">"ces_2026"</span><span class="cc-obj">: </span><span class="cc-bool">true</span><span class="cc-obj">,</span></div>
-            <div>&nbsp;&nbsp;<span class="cc-key">"ecu_programs"</span><span class="cc-obj">: </span><span class="cc-num">3</span><span class="cc-obj">,</span></div>
-            <div>&nbsp;&nbsp;<span class="cc-key">"open_to_work"</span><span class="cc-obj">: </span><span class="cc-bool">true</span></div>
-            <div><span class="cc-bracket">}</span></div>
-          </div>
-        </div>
-      </div>
+      <p class="hero-desc">
+        Safety-critical firmware engineer building cockpit ECUs for
+        <strong>Mahindra &amp; Tata Motors</strong> production vehicles.
+        Specialist in <strong>AUTOSAR Classic</strong>, ISO 26262 (ASIL-D),
+        and Qualcomm Snapdragon SoC integration.
+      </p>
 
+      <div class="hero-btns">
+        <a href="https://github.com/senthilvel-k" target="_blank" class="btn btn-dark">↗ GitHub</a>
+        <a href="https://github.com/senthilvel-k/senthilvel-k.github.io/blob/main/Senthil_Vel_K_Resume.pdf" target="_blank" class="btn btn-outline">Download Resume</a>
+      </div>
     </div>
   </div>
 </section>
@@ -410,22 +467,10 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
 <div id="stats">
   <div class="container">
     <div class="stats-inner">
-      <div class="stat-cell reveal">
-        <span class="snum">3</span>
-        <span class="sdesc">Production ECU Programs</span>
-      </div>
-      <div class="stat-cell reveal d1">
-        <span class="snum">2<span>+</span></span>
-        <span class="sdesc">Years at Visteon</span>
-      </div>
-      <div class="stat-cell reveal d2">
-        <span class="snum">ASIL<span>-D</span></span>
-        <span class="sdesc">Highest Automotive Safety Level</span>
-      </div>
-      <div class="stat-cell reveal d3">
-        <span class="snum">CES<span> 2026</span></span>
-        <span class="sdesc">Global Showcase, Las Vegas</span>
-      </div>
+      <div class="stat-cell reveal"><span class="snum">3</span><span class="sdesc">Production ECU Programs</span></div>
+      <div class="stat-cell reveal d1"><span class="snum">2<span>+</span></span><span class="sdesc">Years at Visteon</span></div>
+      <div class="stat-cell reveal d2"><span class="snum">ASIL<span>-D</span></span><span class="sdesc">ISO 26262 Safety Level</span></div>
+      <div class="stat-cell reveal d3"><span class="snum">CES<span> '26</span></span><span class="sdesc">Global Showcase · Las Vegas</span></div>
     </div>
   </div>
 </div>
@@ -435,119 +480,50 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
   <div class="container">
     <div class="reveal">
       <div class="section-label">Work History</div>
-      <h2>Where I've <em>built</em> things.</h2>
-      <p class="section-sub">Tier-1 automotive supplier, production-shipped firmware, global OEM programs.</p>
+      <h2 class="sec-h2">Where I've <em>built</em> things.</h2>
+      <p class="sec-sub">Tier-1 automotive supplier · Shipped firmware · Global OEM programs</p>
     </div>
-
     <div class="exp-layout reveal">
-      <!-- Left nav -->
       <div class="exp-timeline-nav">
         <div class="exp-nav-item active" data-panel="p1">
           <span class="enav-period">Jul 2023 — Present</span>
-          <div class="enav-company">Visteon Corporation</div>
-          <div class="enav-role">Embedded Systems Engineer</div>
+          <div class="enav-company">Visteon Corp.</div>
+          <div class="enav-role">Embedded SW Engineer II</div>
           <span class="enav-badge current">Current</span>
         </div>
         <div class="exp-nav-item" data-panel="p2">
           <span class="enav-period">Jan 2023 — Jun 2023</span>
-          <div class="enav-company">Visteon Corporation</div>
-          <div class="enav-role">Software Developer Intern</div>
+          <div class="enav-company">Visteon Corp.</div>
+          <div class="enav-role">SW Developer Intern</div>
           <span class="enav-badge intern">Internship</span>
         </div>
       </div>
-
-      <!-- Right panels -->
       <div class="exp-content-panels">
-
         <div class="exp-panel active" id="p1">
           <div class="exp-highlights">
-            <div class="exp-hl">
-              <div class="exp-hl-num">3 ECUs</div>
-              <div class="exp-hl-label">Production programs shipped to Mahindra &amp; Tata Motors</div>
-            </div>
-            <div class="exp-hl">
-              <div class="exp-hl-num">ASIL-D</div>
-              <div class="exp-hl-label">Highest ISO 26262 safety integrity level achieved in production</div>
-            </div>
-            <div class="exp-hl">
-              <div class="exp-hl-num">Silver Award</div>
-              <div class="exp-hl-label">Recognised for delivering diagnostic stack ahead of program gate</div>
-            </div>
+            <div class="exp-hl"><div class="exp-hl-num">3 ECUs</div><div class="exp-hl-label">Production programs shipped to Mahindra &amp; Tata Motors</div></div>
+            <div class="exp-hl"><div class="exp-hl-num">ASIL-D</div><div class="exp-hl-label">Highest ISO 26262 safety integrity level in production</div></div>
+            <div class="exp-hl"><div class="exp-hl-num">Silver Award</div><div class="exp-hl-label">Diagnostic stack delivered ahead of program gate</div></div>
           </div>
-
           <div class="exp-deliverables">
-            <div class="exp-item">
-              <span class="exp-item-icon">🔌</span>
-              <div class="exp-item-body">
-                <div class="exp-item-title">Full UDS Diagnostic Stack — Sole Module Owner</div>
-                <div class="exp-item-desc">Owned <strong>DCM and DEM modules end-to-end</strong> across two production programs. Implemented the complete diagnostic communication layer covering session management, security access, fault memory read/clear, routine control, and data I/O — fully validated against OEM diagnostic test specifications.</div>
-              </div>
-            </div>
-            <div class="exp-item">
-              <span class="exp-item-icon">🚌</span>
-              <div class="exp-item-body">
-                <div class="exp-item-title">AUTOSAR CAN Stack — 200+ Signal Network</div>
-                <div class="exp-item-desc">Sole owner of the <strong>AUTOSAR CAN communication stack</strong> from MCAL driver through CanIf, PduR, and COM layer. Configured a 200+ PDU vehicle communication matrix for Classic CAN and CAN FD on two production ECUs shipping to Mahindra and Tata Motors vehicles.</div>
-              </div>
-            </div>
-            <div class="exp-item">
-              <span class="exp-item-icon">🌐</span>
-              <div class="exp-item-body">
-                <div class="exp-item-title">Automotive Ethernet Bring-Up — MDIO Driver from Scratch</div>
-                <div class="exp-item-desc">Wrote a <strong>Clause 22 MDIO driver</strong> for Realtek Ethernet PHY covering register initialization, auto-negotiation, and link-status detection. Configured NXP SJA1105 L2 switch forwarding tables and VLAN assignments over SPI — delivered 100BASE-T1 network ahead of hardware integration milestone.</div>
-              </div>
-            </div>
-            <div class="exp-item">
-              <span class="exp-item-icon">📱</span>
-              <div class="exp-item-body">
-                <div class="exp-item-title">Qualcomm Snapdragon 8155 SoC Integration</div>
-                <div class="exp-item-desc">Designed a custom <strong>UART IPC framing protocol</strong> between Renesas RH850 MCU and Qualcomm Snapdragon 8155 SoC — byte-level packetization, CRC validation, retransmission — delivering live vehicle CAN signals into <strong>QNX Neutrino RTOS</strong> and Android Automotive HAL.</div>
-              </div>
-            </div>
-            <div class="exp-item">
-              <span class="exp-item-icon">🛡️</span>
-              <div class="exp-item-body">
-                <div class="exp-item-title">ISO 26262 ASIL-D Safety Firmware — Zero Field Escapes</div>
-                <div class="exp-item-desc">Built a thermal safety monitor with I²C ADC sampling, multi-threshold hysteresis (warn/derate/shutdown), and PWM backlight attenuation. Achieved zero thermal-related field escapes across the full OEM production validation cycle. Also reduced ECU quiescent current by 20–40% on Renesas RH850 through clock gating and sleep sequence tuning.</div>
-              </div>
-            </div>
+            <div class="exp-item"><span class="exp-item-icon">🔌</span><div><div class="exp-item-title">Full UDS Diagnostic Stack — Sole Module Owner</div><div class="exp-item-desc">Owned <strong>DCM and DEM modules end-to-end</strong> across two production programs — session management, security access, fault memory read/clear, routine control, data I/O — validated against OEM diagnostic test specifications.</div></div></div>
+            <div class="exp-item"><span class="exp-item-icon">🚌</span><div><div class="exp-item-title">AUTOSAR CAN Stack — 200+ Signal Vehicle Network</div><div class="exp-item-desc">Sole owner of <strong>AUTOSAR CAN communication stack</strong> from MCAL driver through CanIf, PduR, and COM layer. Configured 200+ PDU vehicle matrix for Classic CAN and CAN FD shipping to Mahindra and Tata Motors.</div></div></div>
+            <div class="exp-item"><span class="exp-item-icon">🌐</span><div><div class="exp-item-title">Automotive Ethernet — MDIO Driver Written from Scratch</div><div class="exp-item-desc">Wrote <strong>Clause 22 MDIO driver</strong> for Realtek PHY: register init, auto-negotiation, link-status detection. Configured NXP SJA1105 L2 switch over SPI — 100BASE-T1 bring-up delivered ahead of hardware integration milestone.</div></div></div>
+            <div class="exp-item"><span class="exp-item-icon">📱</span><div><div class="exp-item-title">Qualcomm Snapdragon 8155 SoC Integration</div><div class="exp-item-desc">Custom <strong>UART IPC framing protocol</strong> between Renesas RH850 MCU and Snapdragon 8155 SoC — CRC validation, retransmission — delivering live vehicle CAN signals into <strong>QNX Neutrino RTOS</strong> and Android Automotive HAL.</div></div></div>
+            <div class="exp-item"><span class="exp-item-icon">🛡️</span><div><div class="exp-item-title">ISO 26262 ASIL-D Safety Firmware — Zero Field Escapes</div><div class="exp-item-desc">Thermal safety monitor with I²C ADC sampling, multi-threshold hysteresis (warn/derate/shutdown), PWM backlight attenuation. <strong>Zero thermal-related field escapes</strong> across full OEM validation. Reduced ECU quiescent current by 20–40% through clock gating and sleep sequence tuning.</div></div></div>
           </div>
         </div>
-
         <div class="exp-panel" id="p2">
           <div class="exp-highlights">
-            <div class="exp-hl">
-              <div class="exp-hl-num">Ahead</div>
-              <div class="exp-hl-label">Display bring-up completed ahead of schedule, unblocking integration team</div>
-            </div>
-            <div class="exp-hl">
-              <div class="exp-hl-num">3 Repos</div>
-              <div class="exp-hl-label">Audited 3 production codebases for MISRA-C compliance</div>
-            </div>
-            <div class="exp-hl">
-              <div class="exp-hl-num">GMSL2</div>
-              <div class="exp-hl-label">High-speed SerDes bring-up for triple cockpit display chain</div>
-            </div>
+            <div class="exp-hl"><div class="exp-hl-num">Ahead</div><div class="exp-hl-label">Display bring-up completed ahead of schedule</div></div>
+            <div class="exp-hl"><div class="exp-hl-num">3 Repos</div><div class="exp-hl-label">Audited 3 production codebases for MISRA-C compliance</div></div>
+            <div class="exp-hl"><div class="exp-hl-num">GMSL2</div><div class="exp-hl-label">High-speed SerDes for triple cockpit display chain</div></div>
           </div>
-
           <div class="exp-deliverables">
-            <div class="exp-item">
-              <span class="exp-item-icon">🖥️</span>
-              <div class="exp-item-body">
-                <div class="exp-item-title">Triple 12.5-inch Display Subsystem Bring-Up</div>
-                <div class="exp-item-desc">Led bring-up of the triple-display chain on Infineon Traveo II: configured <strong>Maxim MAX96705/MAX9272 GMSL2 SerDes</strong>, I²C deserializer register initialization, pixel clock synchronization, and forward channel link training — completed ahead of schedule.</div>
-              </div>
-            </div>
-            <div class="exp-item">
-              <span class="exp-item-icon">🔧</span>
-              <div class="exp-item-body">
-                <div class="exp-item-title">Driver Development &amp; Static Analysis</div>
-                <div class="exp-item-desc">Developed and validated <strong>SPI and UART peripheral drivers</strong> at register level. Traced execution flows with Lauterbach Trace32. Audited three production codebases with KlocWork and Coverity, clearing a large backlog of MISRA-C violations before the first hardware-in-loop test.</div>
-              </div>
-            </div>
+            <div class="exp-item"><span class="exp-item-icon">🖥️</span><div><div class="exp-item-title">Triple 12.5-inch Display Subsystem Bring-Up</div><div class="exp-item-desc">Led bring-up on Infineon Traveo II: <strong>Maxim MAX96705/MAX9272 GMSL2 SerDes</strong>, I²C deserializer register init, pixel clock sync, and forward channel link training — completed ahead of schedule, unblocking integration team.</div></div></div>
+            <div class="exp-item"><span class="exp-item-icon">🔧</span><div><div class="exp-item-title">Driver Development &amp; Static Analysis</div><div class="exp-item-desc">SPI and UART peripheral drivers at register level. Register-level debugging with <strong>Lauterbach Trace32</strong>. Audited three production codebases with KlocWork and Coverity, clearing the full MISRA-C backlog before first hardware-in-loop test.</div></div></div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -556,103 +532,238 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
 <!-- TECH STACK -->
 <section id="techstack">
   <div class="container">
-    <div class="stack-title reveal">TECH <span>STACK</span></div>
-
-    <div class="diamond-grid" id="diamond-grid">
-      <!-- Row 1 (1 item) -->
+    <div class="stack-heading reveal">
+      <h2>TECH <span>STACK</span></h2>
+    </div>
+    <div class="diamond-grid" id="dgrid">
+      <!-- Row 1 -->
       <div class="diamond-row">
         <div class="tech-pill">
-          <img src="https://cdn.simpleicons.org/c/A8B9CC" alt="C"><span>Embedded C</span>
+          <div class="tp-icon"><svg viewBox="0 0 32 32" fill="#A8B9CC"><text y="26" font-size="22" font-family="monospace" font-weight="bold">C</text></svg></div>
+          <span class="tp-label">Embedded C</span>
         </div>
       </div>
-      <!-- Row 2 (3 items) -->
+      <!-- Row 2 -->
       <div class="diamond-row">
         <div class="tech-pill">
-          <img src="https://cdn.simpleicons.org/cplusplus/00599C" alt="C++"><span>C++</span>
+          <div class="tp-icon"><i class="devicon-cplusplus-plain colored"></i></div>
+          <span class="tp-label">C++</span>
         </div>
         <div class="tech-pill">
-          <img src="https://cdn.simpleicons.org/renesas/1A56DB" alt="RH850" onerror="this.src='https://img.icons8.com/ios/50/circuit/circuit.png';this.style.filter='brightness(0.6)'"><span>RH850</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="10" width="24" height="14" rx="3" stroke="#5599ff" stroke-width="2"/>
+              <rect x="7" y="13" width="5" height="5" rx="1" fill="#5599ff" opacity="0.4"/>
+              <line x1="15" y1="14" x2="22" y2="14" stroke="#5599ff" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="15" y1="18" x2="20" y2="18" stroke="#5599ff" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="10" y1="7" x2="10" y2="10" stroke="#5599ff" stroke-width="1.5"/><line x1="16" y1="7" x2="16" y2="10" stroke="#5599ff" stroke-width="1.5"/><line x1="22" y1="7" x2="22" y2="10" stroke="#5599ff" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <span class="tp-label">RH850</span>
         </div>
         <div class="tech-pill">
-          <img src="https://cdn.simpleicons.org/python/3776AB" alt="Python"><span>Python</span>
+          <div class="tp-icon"><i class="devicon-python-plain colored"></i></div>
+          <span class="tp-label">Python</span>
         </div>
       </div>
-      <!-- Row 3 (5 items) -->
+      <!-- Row 3 -->
       <div class="diamond-row">
         <div class="tech-pill">
-          <img src="https://img.icons8.com/ios/50/can-bus/can-bus.png" style="filter:brightness(0.55) invert(1)" onerror="this.src='https://img.icons8.com/external-flaticons-lineal-flat-icons/64/external-can-bus-automobile-flaticons-lineal-flat-icons.png'" alt="CAN"><span>CAN FD</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <rect x="2" y="13" width="28" height="6" rx="1" stroke="#ff8c42" stroke-width="2"/>
+              <line x1="8" y1="13" x2="8" y2="19" stroke="#ff8c42" stroke-width="1.5"/>
+              <line x1="16" y1="11" x2="16" y2="13" stroke="#ff8c42" stroke-width="1.5"/><line x1="20" y1="11" x2="20" y2="13" stroke="#ff8c42" stroke-width="1.5"/>
+              <line x1="16" y1="19" x2="16" y2="21" stroke="#ff8c42" stroke-width="1.5"/><line x1="20" y1="19" x2="20" y2="21" stroke="#ff8c42" stroke-width="1.5"/>
+              <text x="5" y="18" font-size="6" fill="#ff8c42" font-family="monospace" font-weight="bold">CAN</text>
+            </svg>
+          </div>
+          <span class="tp-label">CAN FD</span>
         </div>
         <div class="tech-pill">
-          <img src="https://img.icons8.com/ios/50/serial-port/serial-port.png" style="filter:brightness(0.55) invert(1)" alt="SPI"><span>SPI</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="12" stroke="#4f9eff" stroke-width="2"/>
+              <circle cx="16" cy="16" r="5" stroke="#4f9eff" stroke-width="1.5"/>
+              <line x1="4" y1="16" x2="11" y2="16" stroke="#4f9eff" stroke-width="1.5"/><line x1="21" y1="16" x2="28" y2="16" stroke="#4f9eff" stroke-width="1.5"/>
+              <text x="11" y="19" font-size="6" fill="#4f9eff" font-family="monospace" font-weight="bold">SPI</text>
+            </svg>
+          </div>
+          <span class="tp-label">SPI</span>
         </div>
         <div class="tech-pill">
-          <img src="https://img.icons8.com/ios/50/network-card/network-card.png" style="filter:brightness(0.55) invert(1)" alt="AUTOSAR"><span>AUTOSAR</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <rect x="4" y="8" width="24" height="16" rx="3" stroke="#7c6dfa" stroke-width="2"/>
+              <text x="5" y="18" font-size="5.5" fill="#7c6dfa" font-family="monospace" font-weight="bold">AUTOSAR</text>
+            </svg>
+          </div>
+          <span class="tp-label">AUTOSAR</span>
         </div>
         <div class="tech-pill">
-          <img src="https://img.icons8.com/ios/50/serial-port/serial-port.png" style="filter:brightness(0.55) invert(1)" alt="UART"><span>UART / I²C</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <polyline points="2,22 6,22 8,10 12,22 14,16 18,22 20,18 24,22 30,22" stroke="#34d399" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <span class="tp-label">UART / I²C</span>
         </div>
         <div class="tech-pill">
-          <img src="https://cdn.simpleicons.org/qualcomm/3253DC" alt="Qualcomm"><span>Snapdragon</span>
+          <div class="tp-icon"><i class="devicon-qualcomm-plain colored" style="font-size:26px"></i></div>
+          <span class="tp-label">Snapdragon</span>
         </div>
       </div>
-      <!-- Row 4 (7 items) -->
+      <!-- Row 4 (7) -->
       <div class="diamond-row">
         <div class="tech-pill">
-          <img src="https://img.icons8.com/ios/50/iso/iso.png" style="filter:brightness(0.55) invert(1)" alt="ISO 26262"><span>ISO 26262</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <rect x="5" y="5" width="22" height="22" rx="2" stroke="#22d3ee" stroke-width="2"/>
+              <text x="7" y="17" font-size="5" fill="#22d3ee" font-family="monospace" font-weight="bold">ISO</text>
+              <text x="5" y="23" font-size="4.5" fill="#22d3ee" font-family="monospace">26262</text>
+            </svg>
+          </div>
+          <span class="tp-label">ISO 26262</span>
         </div>
         <div class="tech-pill">
-          <img src="https://img.icons8.com/ios/50/debugging/debugging.png" style="filter:brightness(0.55) invert(1)" alt="Trace32"><span>Trace32</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <rect x="4" y="10" width="24" height="14" rx="2" stroke="#f59e0b" stroke-width="1.5"/>
+              <circle cx="10" cy="17" r="3" stroke="#f59e0b" stroke-width="1.5"/>
+              <line x1="15" y1="14" x2="25" y2="14" stroke="#f59e0b" stroke-width="1.2"/><line x1="15" y1="17" x2="25" y2="17" stroke="#f59e0b" stroke-width="1.2"/><line x1="15" y1="20" x2="22" y2="20" stroke="#f59e0b" stroke-width="1.2"/>
+              <text x="4" y="9" font-size="4" fill="#f59e0b" font-family="monospace">Trace32</text>
+            </svg>
+          </div>
+          <span class="tp-label">Trace32</span>
         </div>
         <div class="tech-pill">
-          <img src="https://cdn.simpleicons.org/infineon/0071BF" alt="Infineon" onerror="this.src='https://img.icons8.com/ios/50/microchip/microchip.png';this.style.filter='brightness(0.5) invert(1)'"><span>Traveo II</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <rect x="8" y="8" width="16" height="16" rx="2" stroke="#5599ff" stroke-width="2"/>
+              <line x1="2" y1="12" x2="8" y2="12" stroke="#5599ff" stroke-width="1.5"/><line x1="2" y1="16" x2="8" y2="16" stroke="#5599ff" stroke-width="1.5"/><line x1="2" y1="20" x2="8" y2="20" stroke="#5599ff" stroke-width="1.5"/>
+              <line x1="24" y1="12" x2="30" y2="12" stroke="#5599ff" stroke-width="1.5"/><line x1="24" y1="16" x2="30" y2="16" stroke="#5599ff" stroke-width="1.5"/><line x1="24" y1="20" x2="30" y2="20" stroke="#5599ff" stroke-width="1.5"/>
+              <rect x="11" y="11" width="10" height="10" rx="1" fill="#5599ff" opacity="0.2"/>
+            </svg>
+          </div>
+          <span class="tp-label">Traveo II</span>
         </div>
         <div class="tech-pill">
-          <img src="https://img.icons8.com/ios/50/ethernet-on/ethernet-on.png" style="filter:brightness(0.55) invert(1)" alt="Ethernet"><span>Ethernet</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M4 16 C4 10 10 6 16 6 C22 6 28 10 28 16 C28 22 22 26 16 26 C10 26 4 22 4 16Z" stroke="#38bdf8" stroke-width="1.8"/>
+              <line x1="4" y1="16" x2="28" y2="16" stroke="#38bdf8" stroke-width="1.2"/>
+              <text x="9" y="21" font-size="5" fill="#38bdf8" font-family="monospace">ETH</text>
+            </svg>
+          </div>
+          <span class="tp-label">Ethernet</span>
         </div>
         <div class="tech-pill">
-          <img src="https://img.icons8.com/ios/50/diagnosis/diagnosis.png" style="filter:brightness(0.55) invert(1)" alt="UDS"><span>ISO 14229</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <rect x="5" y="5" width="22" height="22" rx="2" stroke="#a78bfa" stroke-width="2"/>
+              <text x="7" y="16" font-size="5" fill="#a78bfa" font-family="monospace" font-weight="bold">ISO</text>
+              <text x="5" y="22" font-size="4.5" fill="#a78bfa" font-family="monospace">14229</text>
+            </svg>
+          </div>
+          <span class="tp-label">ISO 14229</span>
         </div>
         <div class="tech-pill">
-          <img src="https://img.icons8.com/ios/50/code-quality/code-quality.png" style="filter:brightness(0.55) invert(1)" alt="KlocWork"><span>KlocWork</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M6 26L10 6L16 16L22 6L26 26" stroke="#f472b6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="4" y="31" font-size="4.5" fill="#f472b6" font-family="monospace">Klocwork</text>
+            </svg>
+          </div>
+          <span class="tp-label">KlocWork</span>
         </div>
         <div class="tech-pill">
-          <img src="https://cdn.simpleicons.org/nxp/0076CE" alt="NXP" onerror="this.src='https://img.icons8.com/ios/50/microchip/microchip.png';this.style.filter='brightness(0.5) invert(1)'"><span>NXP MCU</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <rect x="6" y="8" width="20" height="16" rx="2" stroke="#0076CE" stroke-width="2"/>
+              <text x="8" y="18" font-size="5.5" fill="#0076CE" font-family="monospace" font-weight="bold">NXP</text>
+              <line x1="2" y1="13" x2="6" y2="13" stroke="#0076CE" stroke-width="1.5"/><line x1="2" y1="19" x2="6" y2="19" stroke="#0076CE" stroke-width="1.5"/>
+              <line x1="26" y1="13" x2="30" y2="13" stroke="#0076CE" stroke-width="1.5"/><line x1="26" y1="19" x2="30" y2="19" stroke="#0076CE" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <span class="tp-label">NXP MCU</span>
         </div>
       </div>
-      <!-- Row 5 (5 items) -->
+      <!-- Row 5 (5) -->
       <div class="diamond-row">
         <div class="tech-pill">
-          <img src="https://img.icons8.com/ios/50/qr-code/qr-code.png" style="filter:brightness(0.55) invert(1)" alt="QNX"><span>QNX RTOS</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <rect x="4" y="8" width="24" height="16" rx="2" stroke="#34d399" stroke-width="1.8"/>
+              <text x="6" y="16" font-size="5" fill="#34d399" font-family="monospace" font-weight="bold">QNX</text>
+              <text x="5" y="22" font-size="4.5" fill="#34d399" font-family="monospace">NEUTRINO</text>
+            </svg>
+          </div>
+          <span class="tp-label">QNX RTOS</span>
         </div>
         <div class="tech-pill">
-          <img src="https://cdn.simpleicons.org/git/F05032" alt="Git"><span>Git</span>
+          <div class="tp-icon"><i class="devicon-git-plain colored"></i></div>
+          <span class="tp-label">Git</span>
         </div>
         <div class="tech-pill">
-          <img src="https://img.icons8.com/ios/50/android/android.png" style="filter:brightness(0.55) invert(1)" alt="Android"><span>Android Auto</span>
+          <div class="tp-icon"><i class="devicon-android-plain colored"></i></div>
+          <span class="tp-label">Android Auto</span>
         </div>
         <div class="tech-pill">
-          <img src="https://img.icons8.com/ios/50/jira/jira.png" style="filter:brightness(0.55) invert(1)" alt="Jira"><span>Jira</span>
+          <div class="tp-icon"><i class="devicon-jira-plain colored"></i></div>
+          <span class="tp-label">Jira</span>
         </div>
         <div class="tech-pill">
-          <img src="https://cdn.simpleicons.org/coverity/231F20" onerror="this.src='https://img.icons8.com/ios/50/shield/shield.png';this.style.filter='brightness(0.5) invert(1)'" alt="Coverity"><span>Coverity</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M16 4 L28 10 L28 22 L16 28 L4 22 L4 10 Z" stroke="#64748b" stroke-width="1.8"/>
+              <path d="M16 10 L22 13 L22 19 L16 22 L10 19 L10 13 Z" fill="#64748b" opacity="0.3"/>
+              <text x="11" y="18" font-size="4" fill="#94a3b8" font-family="monospace">COV</text>
+            </svg>
+          </div>
+          <span class="tp-label">Coverity</span>
         </div>
       </div>
-      <!-- Row 6 (3 items) -->
+      <!-- Row 6 (3) -->
       <div class="diamond-row">
         <div class="tech-pill">
-          <img src="https://img.icons8.com/ios/50/connection-status-on/connection-status-on.png" style="filter:brightness(0.55) invert(1)" alt="CANalyzer"><span>CANalyzer</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <polyline points="2,22 6,22 8,12 10,18 12,8 14,22 16,16 18,22 20,14 22,22 26,22 30,22" stroke="#22d3ee" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="4" y="28" font-size="4" fill="#22d3ee" font-family="monospace">CANalyzer</text>
+            </svg>
+          </div>
+          <span class="tp-label">CANalyzer</span>
         </div>
         <div class="tech-pill">
-          <img src="https://img.icons8.com/ios/50/display/display.png" style="filter:brightness(0.55) invert(1)" alt="SerDes"><span>GMSL2</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <rect x="6" y="6" width="20" height="20" rx="3" stroke="#fb923c" stroke-width="1.8"/>
+              <line x1="6" y1="14" x2="26" y2="14" stroke="#fb923c" stroke-width="1.2"/>
+              <text x="8" y="23" font-size="5" fill="#fb923c" font-family="monospace">GMSL2</text>
+            </svg>
+          </div>
+          <span class="tp-label">GMSL2</span>
         </div>
         <div class="tech-pill">
-          <img src="https://img.icons8.com/ios/50/maintenance/maintenance.png" style="filter:brightness(0.55) invert(1)" alt="MISRA"><span>MISRA-C</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="10" stroke="#e879f9" stroke-width="1.8"/>
+              <text x="8.5" y="18.5" font-size="5" fill="#e879f9" font-family="monospace" font-weight="bold">MISRA</text>
+            </svg>
+          </div>
+          <span class="tp-label">MISRA-C</span>
         </div>
       </div>
-      <!-- Row 7 (1 item) -->
+      <!-- Row 7 (1) -->
       <div class="diamond-row">
         <div class="tech-pill">
-          <img src="https://img.icons8.com/ios/50/safety-instructions/safety-instructions.png" style="filter:brightness(0.55) invert(1)" alt="ASIL-D"><span>ASIL-D</span>
+          <div class="tp-icon">
+            <svg viewBox="0 0 32 32" fill="none">
+              <path d="M16 4 L28 10 L28 22 L16 28 L4 22 L4 10 Z" stroke="#f59e0b" stroke-width="2"/>
+              <text x="10" y="19" font-size="6" fill="#f59e0b" font-family="monospace" font-weight="bold">ASL</text>
+            </svg>
+          </div>
+          <span class="tp-label">ASIL-D</span>
         </div>
       </div>
     </div>
@@ -664,115 +775,65 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
   <div class="container">
     <div class="reveal">
       <div class="section-label">Projects</div>
-      <h2>What I've <em>shipped.</em></h2>
+      <h2 class="sec-h2">What I've <em>shipped.</em></h2>
     </div>
-
     <div class="proj-tabs reveal">
-      <button class="tab-btn active" data-tab="production">Production ECUs</button>
+      <button class="tab-btn active" data-tab="prod">Production ECUs</button>
       <button class="tab-btn" data-tab="personal">Personal Projects</button>
     </div>
-
-    <div class="tab-panel active" id="tab-production">
-
+    <div class="tab-panel active" id="tab-prod">
       <div class="proj-card reveal">
-        <img class="proj-img"
-          src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
-          alt="Triple cockpit display" loading="lazy">
+        <img class="proj-img" src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=75" alt="Cockpit display" loading="lazy">
         <div class="proj-body">
-          <div class="proj-top">
-            <span class="proj-badge oem">Tata Motors</span>
-            <span class="proj-ces">★ CES 2026</span>
-          </div>
+          <div class="proj-top"><span class="proj-badge oem">Tata Motors</span><span class="proj-ces">★ CES 2026</span></div>
           <div class="proj-title">Triple 12.5-inch Cockpit HPC Controller</div>
           <div class="proj-meta">Infineon Traveo II · ARM Cortex-M7 · Team of 7</div>
-          <p class="proj-desc">High-performance cockpit ECU powering three simultaneous digital displays — showcased at CES 2026, Las Vegas. Owned AUTOSAR OS, full CAN stack, and Automotive Ethernet bring-up including Clause 22 MDIO driver and NXP SJA1105 L2 switch over 100BASE-T1.</p>
-          <div class="proj-stack">
-            <span class="ptag hi">Infineon Traveo II</span><span class="ptag hi">AUTOSAR</span>
-            <span class="ptag hi">100BASE-T1</span><span class="ptag">CAN FD</span>
-            <span class="ptag">NXP SJA1105</span><span class="ptag">MDIO</span><span class="ptag">SPI</span>
-          </div>
+          <p class="proj-desc">High-performance cockpit ECU powering three simultaneous digital displays, showcased at CES 2026. Owned full AUTOSAR OS, CAN stack, and Automotive Ethernet bring-up — Clause 22 MDIO driver and NXP SJA1105 L2 switch over 100BASE-T1.</p>
+          <div class="proj-stack"><span class="ptag hi">Infineon Traveo II</span><span class="ptag hi">AUTOSAR</span><span class="ptag hi">100BASE-T1</span><span class="ptag">CAN FD</span><span class="ptag">MDIO</span><span class="ptag">SPI</span></div>
         </div>
       </div>
-
       <div class="proj-card reveal d1">
-        <img class="proj-img"
-          src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&q=80"
-          alt="Mahindra cockpit" loading="lazy">
+        <img class="proj-img" src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&q=75" alt="Dashboard" loading="lazy">
         <div class="proj-body">
-          <div class="proj-top">
-            <span class="proj-badge oem">Mahindra</span>
-          </div>
+          <div class="proj-top"><span class="proj-badge oem">Mahindra</span></div>
           <div class="proj-title">Dual 10.25-inch Cockpit Domain Controller</div>
           <div class="proj-meta">Renesas RH850 · Snapdragon 8155 · QNX · Team of 6</div>
-          <p class="proj-desc">Cockpit domain controller with Qualcomm Snapdragon 8155 SoC integration. Custom UART IPC framing protocol for real-time vehicle data into QNX Neutrino and Android Automotive. Sole owner of complete UDS diagnostic stack validated against Mahindra diagnostic spec.</p>
-          <div class="proj-stack">
-            <span class="ptag hi">Renesas RH850</span><span class="ptag hi">Snapdragon 8155</span>
-            <span class="ptag hi">QNX Neutrino</span><span class="ptag">ISO 14229</span>
-            <span class="ptag">Android Automotive</span><span class="ptag">DCM/DEM</span>
-          </div>
+          <p class="proj-desc">Cockpit domain controller with Qualcomm Snapdragon 8155 SoC integration. Custom UART IPC protocol for real-time vehicle data into QNX Neutrino and Android Automotive. Sole owner of complete UDS diagnostic stack.</p>
+          <div class="proj-stack"><span class="ptag hi">Renesas RH850</span><span class="ptag hi">Snapdragon 8155</span><span class="ptag hi">QNX</span><span class="ptag">ISO 14229</span><span class="ptag">DCM/DEM</span></div>
         </div>
       </div>
-
       <div class="proj-card reveal d2">
-        <img class="proj-img"
-          src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=80"
-          alt="Infotainment ECU" loading="lazy">
+        <img class="proj-img" src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=600&q=75" alt="Infotainment" loading="lazy">
         <div class="proj-body">
-          <div class="proj-top">
-            <span class="proj-badge oem">Mahindra · Fuel + EV</span>
-          </div>
+          <div class="proj-top"><span class="proj-badge oem">Mahindra · Fuel + EV</span></div>
           <div class="proj-title">10.25-inch Standalone Infotainment ECU</div>
           <div class="proj-meta">NXP MPC560xP · ISO 26262 ASIL-D · Team of 5</div>
-          <p class="proj-desc">ASIL-D thermal safety monitor: I²C ADC sampling, multi-threshold hysteresis (warn/derate/shutdown), PWM backlight attenuation — zero field escapes in OEM validation. Maxim MAX96705/MAX9272 SerDes bring-up unified across fuel and EV hardware variants.</p>
-          <div class="proj-stack">
-            <span class="ptag hi">NXP MPC560xP</span><span class="ptag hi">ISO 26262 ASIL-D</span>
-            <span class="ptag">I²C ADC</span><span class="ptag">PWM Control</span>
-            <span class="ptag">GMSL2 SerDes</span><span class="ptag">EV Platform</span>
-          </div>
+          <p class="proj-desc">ASIL-D thermal safety monitor — I²C ADC sampling, multi-threshold hysteresis, PWM backlight attenuation. Zero field escapes in OEM validation. Maxim MAX96705/MAX9272 SerDes bring-up unified across fuel and EV variants.</p>
+          <div class="proj-stack"><span class="ptag hi">NXP MPC560xP</span><span class="ptag hi">ASIL-D</span><span class="ptag">I²C ADC</span><span class="ptag">GMSL2</span><span class="ptag">EV Platform</span></div>
         </div>
       </div>
-
     </div>
-
     <div class="tab-panel" id="tab-personal">
-
       <div class="proj-card reveal">
-        <img class="proj-img"
-          src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=600&q=80"
-          alt="Braille toy" loading="lazy">
+        <img class="proj-img" src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=600&q=75" alt="Braille toy" loading="lazy">
         <div class="proj-body">
-          <div class="proj-top">
-            <span class="proj-badge personal">Team Lead · Team of 4</span>
-          </div>
+          <div class="proj-top"><span class="proj-badge personal">Team Lead · 4 members</span></div>
           <div class="proj-title">Braille Education Toy</div>
           <div class="proj-meta">Arduino Mega 2560 · Audio Playback · Accessibility</div>
-          <p class="proj-desc">Interactive Braille learning device with 26 push buttons mapped to digital I/O pins. Audio playback via microSD module and LM386 amplifier — pre-recorded WAV files triggered per button press. Led the team as embedded systems developer and project lead.</p>
-          <div class="proj-stack">
-            <span class="ptag hi">Arduino Mega 2560</span><span class="ptag">Digital I/O</span>
-            <span class="ptag">microSD</span><span class="ptag">LM386 Amp</span><span class="ptag">WAV Audio</span>
-          </div>
+          <p class="proj-desc">Interactive Braille learning device — 26 push buttons mapped to digital I/O. Audio playback via microSD + LM386 amplifier. Pre-recorded WAV files triggered per button press.</p>
+          <div class="proj-stack"><span class="ptag hi">Arduino Mega 2560</span><span class="ptag">Digital I/O</span><span class="ptag">microSD</span><span class="ptag">LM386</span><span class="ptag">WAV Audio</span></div>
         </div>
       </div>
-
       <div class="proj-card reveal d1">
-        <img class="proj-img"
-          src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=600&q=80"
-          alt="RFID attendance" loading="lazy">
+        <img class="proj-img" src="https://images.unsplash.com/photo-1563986768494-4dee2763ff3f?w=600&q=75" alt="RFID" loading="lazy">
         <div class="proj-body">
-          <div class="proj-top">
-            <span class="proj-badge personal">Embedded Dev · Team of 4</span>
-          </div>
+          <div class="proj-top"><span class="proj-badge personal">Embedded Dev · 4 members</span></div>
           <div class="proj-title">RFID Smart Attendance System</div>
           <div class="proj-meta">ATmega328P · SPI · Cloud Integration</div>
-          <p class="proj-desc">RFID-based attendance and access control on ATmega328P. MFRC522 module over SPI for authentication. Real-time cloud sync to Google Sheets via Google Script API. Full firmware: tag validation, CRC checking, and structured data transmission.</p>
-          <div class="proj-stack">
-            <span class="ptag hi">ATmega328P</span><span class="ptag hi">MFRC522 · SPI</span>
-            <span class="ptag">Wi-Fi/Ethernet</span><span class="ptag">Google Script API</span>
-            <span class="ptag">Google Sheets</span>
-          </div>
+          <p class="proj-desc">RFID-based attendance on ATmega328P. MFRC522 over SPI for authentication. Real-time sync to Google Sheets via Google Script API — full firmware with tag validation, CRC, and structured data transmission.</p>
+          <div class="proj-stack"><span class="ptag hi">ATmega328P</span><span class="ptag hi">MFRC522 · SPI</span><span class="ptag">Wi-Fi</span><span class="ptag">Google Script API</span></div>
         </div>
       </div>
-
     </div>
   </div>
 </section>
@@ -780,15 +841,111 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
 <!-- GITHUB -->
 <section id="github-section">
   <div class="container">
-    <div class="gh-header-wrap reveal">
+    <div class="gh-hdr reveal">
       <div>
-        <div class="gh-section-label">Open Source &amp; Personal Work</div>
+        <div class="gh-lbl">Open Source &amp; Personal Work</div>
         <div class="gh-h2">GitHub <em>Repositories.</em></div>
       </div>
-      <a href="https://github.com/senthilvel-k" target="_blank" class="gh-view-all">View all →</a>
+      <a href="https://github.com/senthilvel-k" target="_blank" class="gh-all-link">View all →</a>
     </div>
     <div id="gh-grid" class="reveal">
       <div class="gh-state">Fetching from github.com/senthilvel-k…</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════════════
+     BLOGS
+     HOW TO ADD A NEW BLOG:
+     1. Copy a .blog-card div below
+     2. Update blog-tag, blog-date, blog-title, blog-desc
+     3. Change href="YOUR_BLOG_URL"
+     4. Remove class="coming-soon" if it has one
+     Publish to GitHub — it goes live instantly.
+════════════════════════════════ -->
+<section id="blogs">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Technical Writing</div>
+      <h2 class="sec-h2">Embedded <em>Insights.</em></h2>
+      <p class="sec-sub">Deep-dives into automotive embedded systems — protocols, architecture, and real-world ECU development.</p>
+    </div>
+
+    <div class="blogs-grid">
+
+      <!-- ─── ADD YOUR BLOGS HERE ─── -->
+      <!-- EXAMPLE (live blog):
+      <a href="https://your-blog-url.com" target="_blank" class="blog-card">
+        <span class="blog-tag">Protocol</span>
+        <div class="blog-date">Mar 2025</div>
+        <div class="blog-title">How CAN Bus Works — A Firmware Engineer's Perspective</div>
+        <div class="blog-desc">Breaking down CAN frame structure, arbitration, and how AUTOSAR maps signals to PDUs in a real vehicle ECU.</div>
+        <span class="blog-arrow">↗</span>
+      </a>
+      -->
+
+      <!-- Coming soon placeholders — replace with real posts as you write them -->
+      <div class="blog-card coming-soon">
+        <span class="blog-tag upcoming">Coming Soon</span>
+        <div class="blog-date">—</div>
+        <div class="blog-title">How CAN Bus Works — A Firmware Engineer's Perspective</div>
+        <div class="blog-desc">CAN frame structure, arbitration, bit-stuffing, and how AUTOSAR maps signals to PDUs in a real ECU.</div>
+      </div>
+
+      <div class="blog-card coming-soon">
+        <span class="blog-tag upcoming">Coming Soon</span>
+        <div class="blog-date">—</div>
+        <div class="blog-title">I²C Deep Dive — From Register Maps to Real Driver Code</div>
+        <div class="blog-desc">START/STOP conditions, address phases, ACK handling, and writing production I²C drivers for automotive sensors.</div>
+      </div>
+
+      <div class="blog-card coming-soon">
+        <span class="blog-tag upcoming">Coming Soon</span>
+        <div class="blog-date">—</div>
+        <div class="blog-title">AUTOSAR DCM — How UDS Diagnostics Actually Work</div>
+        <div class="blog-desc">Service IDs, session layers, security access, and implementing ISO 14229 handlers in AUTOSAR Classic.</div>
+      </div>
+
+      <div class="blog-card coming-soon">
+        <span class="blog-tag upcoming">Coming Soon</span>
+        <div class="blog-date">—</div>
+        <div class="blog-title">ISO 26262 in Practice — What ASIL-D Really Means in Code</div>
+        <div class="blog-desc">Translating functional safety requirements into actual firmware patterns — failure modes, safe states, and thermal protection.</div>
+      </div>
+
+      <div class="blog-card coming-soon">
+        <span class="blog-tag upcoming">Coming Soon</span>
+        <div class="blog-date">—</div>
+        <div class="blog-title">QNX Neutrino &amp; Android Automotive — IPC from MCU to SoC</div>
+        <div class="blog-desc">How a bare-metal MCU talks to a Linux-based SoC running QNX, and how vehicle data ends up on an Android display.</div>
+      </div>
+
+      <div class="blog-card coming-soon">
+        <span class="blog-tag upcoming">Coming Soon</span>
+        <div class="blog-date">—</div>
+        <div class="blog-title">Automotive Ethernet — Why 100BASE-T1 is Different</div>
+        <div class="blog-desc">Single-pair Ethernet, MDIO register maps, PHY bring-up, and Layer 2 switch configuration for in-vehicle networks.</div>
+      </div>
+
+    </div>
+
+    <!-- How to add blogs -->
+    <div class="blog-howto reveal">
+      <div class="howto-title">How to publish a new blog post</div>
+      <div class="howto-steps">
+        <div class="howto-step">
+          <div class="howto-num">STEP 01 — Write</div>
+          <div class="howto-text">Write your blog anywhere — Hashnode, Dev.to, Medium, or a GitHub markdown file. Get your published URL ready.</div>
+        </div>
+        <div class="howto-step">
+          <div class="howto-num">STEP 02 — Add card</div>
+          <div class="howto-text">Open <span class="howto-code">index.html</span>. Copy any <span class="howto-code">.blog-card</span> div. Update the tag, date, title, description and set <span class="howto-code">href="YOUR_URL"</span>. Remove <span class="howto-code">coming-soon</span> class.</div>
+        </div>
+        <div class="howto-step">
+          <div class="howto-num">STEP 03 — Push</div>
+          <div class="howto-text">Commit and push to <span class="howto-code">senthilvel-k.github.io</span>. GitHub Pages deploys automatically in ~60 seconds. Done.</div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -798,49 +955,27 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
   <div class="container">
     <div class="reveal">
       <div class="section-label">Contact</div>
-      <h2>Let's <em>connect.</em></h2>
+      <h2 class="sec-h2">Let's <em>connect.</em></h2>
     </div>
     <div class="contact-grid reveal">
       <div>
-        <p class="contact-intro">
-          Embedded Systems Engineer at Visteon Corporation. Firmware in production on
-          <strong>Mahindra &amp; Tata Motors</strong> vehicles, products showcased at <strong>CES 2026</strong>.
-          Open to senior embedded and automotive semiconductor roles.
-        </p>
+        <p class="contact-intro">Embedded Software Engineer II at Visteon Corporation. Firmware in production on <strong>Mahindra &amp; Tata Motors</strong> vehicles, products showcased at <strong>CES 2026</strong>. Open to senior embedded and automotive semiconductor roles.</p>
         <div class="contact-links">
-          <a href="mailto:senthil3112000@gmail.com" class="clink">
-            <span class="clink-tag">EMAIL</span>
-            <div><div class="clink-text">senthil3112000@gmail.com</div><div class="clink-sub">Best way to reach me</div></div>
-          </a>
-          <a href="https://www.linkedin.com/in/senthil-vel/" target="_blank" class="clink">
-            <span class="clink-tag">LINKEDIN</span>
-            <div><div class="clink-text">linkedin.com/in/senthil-vel</div><div class="clink-sub">Professional profile</div></div>
-          </a>
-          <a href="https://github.com/senthilvel-k" target="_blank" class="clink">
-            <span class="clink-tag">GITHUB</span>
-            <div><div class="clink-text">github.com/senthilvel-k</div><div class="clink-sub">Personal projects</div></div>
-          </a>
-          <a href="https://github.com/senthilvel-k/senthilvel-k.github.io/blob/main/Senthil_Vel_K_Resume.pdf"
-             target="_blank" class="clink">
-            <span class="clink-tag">RESUME</span>
-            <div><div class="clink-text">Download PDF ↗</div><div class="clink-sub">Latest version on GitHub</div></div>
-          </a>
+          <a href="mailto:senthil3112000@gmail.com" class="clink"><span class="clink-tag">EMAIL</span><div><div class="clink-text">senthil3112000@gmail.com</div><div class="clink-sub">Best way to reach me</div></div></a>
+          <a href="https://www.linkedin.com/in/senthil-vel/" target="_blank" class="clink"><span class="clink-tag">LINKEDIN</span><div><div class="clink-text">linkedin.com/in/senthil-vel</div><div class="clink-sub">Professional profile</div></div></a>
+          <a href="https://github.com/senthilvel-k" target="_blank" class="clink"><span class="clink-tag">GITHUB</span><div><div class="clink-text">github.com/senthilvel-k</div><div class="clink-sub">Personal projects &amp; repos</div></div></a>
+          <a href="https://github.com/senthilvel-k/senthilvel-k.github.io/blob/main/Senthil_Vel_K_Resume.pdf" target="_blank" class="clink"><span class="clink-tag">RESUME</span><div><div class="clink-text">Download PDF ↗</div><div class="clink-sub">Latest version on GitHub</div></div></a>
         </div>
       </div>
-
-      <div class="status-card">
-        <div class="sc-header">
-          <span class="sc-header-title">Current Status</span>
-          <span class="sc-online">Online</span>
-        </div>
+      <div class="sc">
+        <div class="sc-hdr"><span class="sc-hdr-t">Current Status</span><span class="sc-live">Online</span></div>
         <div class="sc-rows">
           <div class="sc-row"><span class="sc-k">Location</span><span class="sc-v">Chennai, India</span></div>
-          <div class="sc-row"><span class="sc-k">Current role</span><span class="sc-v">Embedded Systems Engineer</span></div>
+          <div class="sc-row"><span class="sc-k">Role</span><span class="sc-v">Embedded SW Engineer II</span></div>
           <div class="sc-row"><span class="sc-k">Company</span><span class="sc-v">Visteon Corporation</span></div>
           <div class="sc-row"><span class="sc-k">OEM programs</span><span class="sc-v">Mahindra · Tata Motors</span></div>
           <div class="sc-row"><span class="sc-k">CES 2026</span><span class="sc-v yes">Showcased ✓</span></div>
           <div class="sc-row"><span class="sc-k">Open to work</span><span class="sc-v yes">Yes, actively</span></div>
-          <div class="sc-row"><span class="sc-k">Relocation</span><span class="sc-v">Open to discuss</span></div>
         </div>
       </div>
     </div>
@@ -850,7 +985,7 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
 <footer>
   <div class="container">
     <div class="footer-inner">
-      <div class="footer-name"><strong>Senthil Vel Kumaran</strong> · Embedded Systems Engineer · Chennai</div>
+      <div class="footer-name"><strong>Senthil Vel Kumaran</strong> · Embedded Software Engineer II</div>
       <div class="footer-links">
         <a href="https://github.com/senthilvel-k" target="_blank">GitHub</a>
         <a href="https://www.linkedin.com/in/senthil-vel/" target="_blank">LinkedIn</a>
@@ -862,141 +997,117 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
 </footer>
 
 <script>
-// ─── CUSTOM CURSOR ────────────────────────────────────
-const cur = document.getElementById('cursor');
-const ring = document.getElementById('cursor-ring');
+// ── LOADER ────────────────────────────────────────────
+const loaderMsgs = ['Initialising ECU…','Loading AUTOSAR stack…','Mounting CAN driver…','Registering UDS services…','Booting portfolio…'];
+const lbar = document.getElementById('lbar');
+const ltxt = document.getElementById('loader-txt');
+let pct = 0, msgIdx = 0;
+const loaderInt = setInterval(()=>{
+  pct = Math.min(pct + (Math.random()*8 + 4), 100);
+  lbar.style.width = pct + '%';
+  if(msgIdx < loaderMsgs.length - 1 && pct > (msgIdx+1)*20){
+    msgIdx++; ltxt.textContent = loaderMsgs[msgIdx];
+  }
+  if(pct >= 100){
+    clearInterval(loaderInt);
+    ltxt.textContent = 'Ready.';
+    setTimeout(()=>document.getElementById('loader').classList.add('hide'), 500);
+  }
+},80);
+
+// ── CURSOR ────────────────────────────────────────────
+const cur = document.getElementById('cur');
+const curRing = document.getElementById('cur-ring');
 let mx=0,my=0,rx=0,ry=0;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
-function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing)}
-animRing();
-document.querySelectorAll('a,button,.tech-pill,.exp-nav-item,.tab-btn').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';ring.style.width='48px';ring.style.height='48px'});
-  el.addEventListener('mouseleave',()=>{cur.style.width='10px';cur.style.height='10px';ring.style.width='32px';ring.style.height='32px'});
-});
-
-// ─── NAV SCROLL ───────────────────────────────────────
-window.addEventListener('scroll',()=>{
-  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40);
-});
-
-// ─── REVEAL ON SCROLL ─────────────────────────────────
-const io = new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      e.target.classList.add('in');
-      e.target.querySelectorAll('[data-count]').forEach(animCount);
-      io.unobserve(e.target);
-    }
+(function animRing(){rx+=(mx-rx)*0.1;ry+=(my-ry)*0.1;curRing.style.left=rx+'px';curRing.style.top=ry+'px';requestAnimationFrame(animRing)})();
+['a','button','.tech-pill','.exp-nav-item','.tab-btn','.blog-card','.proj-card'].forEach(sel=>{
+  document.querySelectorAll(sel).forEach(el=>{
+    el.addEventListener('mouseenter',()=>{cur.style.width='18px';cur.style.height='18px';curRing.style.width='46px';curRing.style.height='46px'});
+    el.addEventListener('mouseleave',()=>{cur.style.width='8px';cur.style.height='8px';curRing.style.width='28px';curRing.style.height='28px'});
   });
-},{threshold:0.08});
-document.querySelectorAll('.reveal,.reveal-r').forEach(el=>io.observe(el));
+});
 
-// ─── TECH PILL STAGGER ────────────────────────────────
+// ── NAV ───────────────────────────────────────────────
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>50));
+
+// ── SCROLL REVEAL ─────────────────────────────────────
+const io = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
+},{threshold:0.08});
+document.querySelectorAll('.reveal,.reveal-l,.reveal-r,.reveal-scale').forEach(el=>io.observe(el));
+
+// ── TECH PILLS STAGGER ────────────────────────────────
 const pillObs = new IntersectionObserver(entries=>{
   entries.forEach(e=>{
     if(e.isIntersecting){
-      const pills = e.target.querySelectorAll('.tech-pill');
-      pills.forEach((p,i)=>{
-        setTimeout(()=>p.classList.add('in'), i*45);
-      });
+      e.target.querySelectorAll('.tech-pill').forEach((p,i)=>setTimeout(()=>p.classList.add('in'),i*38));
       pillObs.unobserve(e.target);
     }
   });
-},{threshold:0.1});
-const dg = document.getElementById('diamond-grid');
+},{threshold:0.05});
+const dg = document.getElementById('dgrid');
 if(dg) pillObs.observe(dg);
 
-// Also reveal stack-title
-const stackTitle = document.querySelector('.stack-title');
-if(stackTitle){
-  const tObs = new IntersectionObserver(entries=>{
-    entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='none';e.target.style.transition='opacity 0.6s ease,transform 0.6s ease';tObs.unobserve(e.target)}});
-  },{threshold:0.1});
-  stackTitle.style.transform='translateY(20px)';
-  tObs.observe(stackTitle);
-}
-
-// ─── EXPERIENCE TABS ──────────────────────────────────
+// ── EXPERIENCE TABS ───────────────────────────────────
 document.querySelectorAll('.exp-nav-item').forEach(item=>{
   item.addEventListener('click',()=>{
-    const panelId = item.dataset.panel;
     document.querySelectorAll('.exp-nav-item').forEach(i=>i.classList.remove('active'));
     document.querySelectorAll('.exp-panel').forEach(p=>p.classList.remove('active'));
     item.classList.add('active');
-    const panel = document.getElementById(panelId);
-    if(panel){panel.classList.add('active')}
+    const panel = document.getElementById(item.dataset.panel);
+    if(panel) panel.classList.add('active');
   });
 });
 
-// ─── PROJECT TABS ─────────────────────────────────────
+// ── PROJECT TABS ──────────────────────────────────────
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
-    const tab=btn.dataset.tab;
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
     document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
     btn.classList.add('active');
-    document.getElementById('tab-'+tab).classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
   });
 });
 
-// ─── GITHUB REPOS ─────────────────────────────────────
+// ── GITHUB ────────────────────────────────────────────
 async function loadRepos(){
-  const grid=document.getElementById('gh-grid');
+  const grid = document.getElementById('gh-grid');
   try{
-    const r=await fetch('https://api.github.com/users/senthilvel-k/repos?sort=updated&per_page=9&type=public',{
-      headers:{'Accept':'application/vnd.github.v3+json'}
+    const r = await fetch('https://api.github.com/users/senthilvel-k/repos?sort=updated&per_page=9&type=public',{
+      headers:{'Accept':'application/vnd.github.v3+json','Cache-Control':'no-cache'}
     });
-    if(!r.ok)throw new Error(r.status);
-    const repos=await r.json();
-    if(!Array.isArray(repos)||repos.length===0){
-      grid.innerHTML=`<div class="gh-state">
-        No public repositories yet.<br>
-        <span style="font-size:11px;margin-top:6px;display:block">
-          Push your first project to <a href="https://github.com/senthilvel-k" target="_blank">github.com/senthilvel-k</a> — it appears here automatically.
-        </span>
-      </div>`;
+    if(!r.ok) throw new Error(r.status);
+    const repos = await r.json();
+    if(!Array.isArray(repos)||!repos.length){
+      grid.innerHTML='<div class="gh-state">No public repositories yet. Push your first project to <a href="https://github.com/senthilvel-k" target="_blank">github.com/senthilvel-k</a></div>';
       return;
     }
-    grid.innerHTML=repos.map(repo=>`
+    grid.innerHTML = repos.map(repo=>`
       <a href="${repo.html_url}" target="_blank" class="gh-card">
         <div class="gh-card-top">
           <span class="gh-name">${repo.name}</span>
           ${repo.language?`<span class="gh-lang">${repo.language}</span>`:''}
         </div>
-        <div class="gh-desc">${repo.description||'No description.'}</div>
+        <div class="gh-desc">${repo.description||'No description provided.'}</div>
         <div class="gh-meta">
           <span>★ ${repo.stargazers_count}</span>
           <span>⑂ ${repo.forks_count}</span>
           <span>${new Date(repo.updated_at).toLocaleDateString('en-IN',{month:'short',year:'numeric'})}</span>
         </div>
-      </a>
-    `).join('');
+      </a>`).join('');
   }catch(err){
-    console.warn('GitHub API:', err);
-    grid.innerHTML=`<div class="gh-state">
-      <a href="https://github.com/senthilvel-k" target="_blank">View repositories on GitHub →</a>
-    </div>`;
+    console.warn('GitHub API error:',err);
+    grid.innerHTML='<div class="gh-state"><a href="https://github.com/senthilvel-k" target="_blank">View repositories on GitHub →</a></div>';
   }
 }
 loadRepos();
 
-// ─── COUNTER ──────────────────────────────────────────
-function animCount(el){
-  const t=parseInt(el.dataset.count),dur=1400,s=performance.now();
-  const sfx=t>=100?'+':'';
-  (function tick(now){
-    const p=Math.min((now-s)/dur,1),v=Math.round(t*(1-Math.pow(1-p,3)));
-    el.textContent=v+sfx;
-    if(p<1)requestAnimationFrame(tick);
-    else el.textContent=t+sfx;
-  })(s);
-}
-
-// ─── SMOOTH SCROLL ────────────────────────────────────
+// ── SMOOTH SCROLL ─────────────────────────────────────
 document.querySelectorAll('a[href^="#"]').forEach(a=>{
   a.addEventListener('click',e=>{
-    const tgt=document.querySelector(a.getAttribute('href'));
-    if(tgt){e.preventDefault();tgt.scrollIntoView({behavior:'smooth',block:'start'})}
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'})}
   });
 });
 </script>
