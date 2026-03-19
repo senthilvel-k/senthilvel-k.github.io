@@ -92,10 +92,10 @@ nav.elevated{box-shadow:0 2px 30px rgba(0,0,0,.07)}
 .nav-links{list-style:none;display:flex;gap:0;align-items:center}
 .nav-links a{
   font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.1em;
-  text-transform:uppercase;transition:color .2s;padding:8px 14px;position:relative
+  text-transform:uppercase;transition:color .2s;padding:8px 10px;position:relative
 }
 .nav-links a::after{
-  content:'';position:absolute;bottom:0;left:14px;right:14px;
+  content:'';position:absolute;bottom:0;left:10px;right:10px;
   height:2px;background:var(--accent);transform:scaleX(0);
   transform-origin:center;transition:transform .2s
 }
@@ -762,7 +762,7 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
   <a href="https://www.linkedin.com/in/senthil-vel/" target="_blank" title="LinkedIn">
     <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
   </a>
-  <a href="mailto:senthil3112000@gmail.com" title="Email">
+  <a href="/cdn-cgi/l/email-protection#aad9cfc4dec2c3c6999b9b989a9a9aeacdc7cbc3c684c9c5c7" title="Email">
     <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
   </a>
 </div>
@@ -775,6 +775,7 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
       <li><a href="#about">About</a></li>
       <li><a href="#experience">Experience</a></li>
       <li><a href="#projects">Projects</a></li>
+      <li><a href="#pico-series" onclick="activatePicoTab(); return false;">Learning Series</a></li>
       <li><a href="#techstack">Stack</a></li>
       <li><a href="#achievements">Awards</a></li>
       <li><a href="#github-section">GitHub</a></li>
@@ -794,6 +795,7 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
   <a href="#about" class="mob-link">About</a>
   <a href="#experience" class="mob-link">Experience</a>
   <a href="#projects" class="mob-link">Projects</a>
+  <a href="#pico-series" onclick="activatePicoTab(); return false;" class="mob-link">Learning Series</a>
   <a href="#techstack" class="mob-link">Stack</a>
   <a href="#achievements" class="mob-link">Awards</a>
   <a href="#github-section" class="mob-link">GitHub</a>
@@ -984,6 +986,7 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
     <div class="proj-tabs s-up d2">
       <button class="tab-btn active" data-tab="prod">Production ECUs</button>
       <button class="tab-btn" data-tab="personal">Personal Projects</button>
+      <button class="tab-btn" data-tab="pico">Learning Series</button>
     </div>
     <div class="tab-panel active" id="tab-prod">
       <div class="proj-card s-left" data-project="triple">
@@ -1041,6 +1044,63 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
           <p class="proj-desc">RFID attendance system with real-time Google Sheets sync via REST API.</p>
           <div class="proj-stack"><span class="ptag hi">ATmega328P</span><span class="ptag hi">MFRC522</span><span class="ptag">SPI</span><span class="ptag">Wi-Fi</span><span class="ptag">Google API</span></div>
           <div class="proj-expand-hint"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 3v10M3 8l5 5 5-5"/></svg>Click to explore</div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-panel" id="tab-pico">
+      <div class="proj-card s-left" onclick="window.open('https://senthilvel-k.github.io/lcd-rpi-pico/','_blank')" style="cursor:pointer">
+        <div class="proj-img-wrap"><img class="proj-img" src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&q=75" alt="LCD Display" loading="lazy"></div>
+        <div class="proj-body">
+          <div class="proj-top"><span class="proj-badge personal">Project 01 · LCD Display</span></div>
+          <div class="proj-title">LCD Display</div>
+          <div class="proj-meta">Raspberry Pi Pico · HD44780 · 4-bit Parallel · C (C11)</div>
+          <p class="proj-desc">HD44780 16×2 LCD driver written from scratch — 4-bit parallel protocol, nibble splitting, EN pulse generation, DDRAM cursor addressing. Zero external libraries.</p>
+          <div class="proj-stack"><span class="ptag hi">HD44780</span><span class="ptag hi">4-bit Mode</span><span class="ptag">GPIO</span><span class="ptag">Pico SDK</span><span class="ptag">CMake</span></div>
+          <div class="proj-expand-hint"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h12M9 3l5 5-5 5"/></svg>Visit Project Site ↗</div>
+        </div>
+      </div>
+      <div class="proj-card s-right" onclick="window.open('https://senthilvel-k.github.io/interrupt-rpi-pico/','_blank')" style="cursor:pointer">
+        <div class="proj-img-wrap"><img class="proj-img" src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&q=75" alt="Interrupt Handling" loading="lazy"></div>
+        <div class="proj-body">
+          <div class="proj-top"><span class="proj-badge personal">Project 02 · Interrupts</span></div>
+          <div class="proj-title">Interrupt Handling</div>
+          <div class="proj-meta">Raspberry Pi Pico · GPIO IRQ · Rising Edge · ISR</div>
+          <p class="proj-desc">External interrupt on GPIO rising edge — ISR callback pattern, hardware edge detection, LED toggle. Explains polling vs interrupt-driven design.</p>
+          <div class="proj-stack"><span class="ptag hi">GPIO IRQ</span><span class="ptag hi">Rising Edge</span><span class="ptag">ISR</span><span class="ptag">Pico SDK</span></div>
+          <div class="proj-expand-hint"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h12M9 3l5 5-5 5"/></svg>Visit Project Site ↗</div>
+        </div>
+      </div>
+      <div class="proj-card s-left d2" onclick="window.open('https://senthilvel-k.github.io/ultrasonic-rpi-pico/','_blank')" style="cursor:pointer">
+        <div class="proj-img-wrap"><img class="proj-img" src="https://images.unsplash.com/photo-1563770660941-20978e870e26?w=600&q=75" alt="Ultrasonic Sensor" loading="lazy"></div>
+        <div class="proj-body">
+          <div class="proj-top"><span class="proj-badge personal">Project 03 · Ultrasonic</span></div>
+          <div class="proj-title">Ultrasonic Distance Sensor</div>
+          <div class="proj-meta">Raspberry Pi Pico · HC-SR04 · Time-of-Flight · C</div>
+          <p class="proj-desc">HC-SR04 distance measurement — 10µs trigger pulse, echo width timing, distance = width ÷ 29 ÷ 2. Timeout guard, PuTTY serial output.</p>
+          <div class="proj-stack"><span class="ptag hi">HC-SR04</span><span class="ptag hi">Time-of-Flight</span><span class="ptag">GPIO Timing</span><span class="ptag">Serial</span></div>
+          <div class="proj-expand-hint"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h12M9 3l5 5-5 5"/></svg>Visit Project Site ↗</div>
+        </div>
+      </div>
+      <div class="proj-card s-right d2" onclick="window.open('https://senthilvel-k.github.io/keypad-rpi-pico/','_blank')" style="cursor:pointer">
+        <div class="proj-img-wrap"><img class="proj-img" src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&q=75" alt="Keypad Matrix" loading="lazy"></div>
+        <div class="proj-body">
+          <div class="proj-top"><span class="proj-badge personal">Project 04 · Keypad</span></div>
+          <div class="proj-title">Keypad Matrix Scanning</div>
+          <div class="proj-meta">Raspberry Pi Pico · 4×4 Matrix · Column Scan · C</div>
+          <p class="proj-desc">4×4 matrix column scanning — 16 keys on 8 GPIO pins, pull-up inputs, key debounce, 2D keyMap[row][col] lookup table.</p>
+          <div class="proj-stack"><span class="ptag hi">Matrix Scan</span><span class="ptag hi">Pull-up</span><span class="ptag">Debounce</span><span class="ptag">GPIO</span></div>
+          <div class="proj-expand-hint"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h12M9 3l5 5-5 5"/></svg>Visit Project Site ↗</div>
+        </div>
+      </div>
+      <div class="proj-card s-left d3" onclick="window.open('https://senthilvel-k.github.io/potentiometer-rpi-pico/','_blank')" style="cursor:pointer">
+        <div class="proj-img-wrap"><img class="proj-img" src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&q=75" alt="ADC PWM" loading="lazy"></div>
+        <div class="proj-body">
+          <div class="proj-top"><span class="proj-badge personal">Project 05 · ADC + PWM</span></div>
+          <div class="proj-title">ADC + PWM LED Control</div>
+          <div class="proj-meta">Raspberry Pi Pico · 12-bit ADC · Software PWM · C</div>
+          <p class="proj-desc">Potentiometer → 12-bit ADC → software PWM → LED brightness control — voltage conversion math, duty cycle concept, real-time serial voltage output.</p>
+          <div class="proj-stack"><span class="ptag hi">12-bit ADC</span><span class="ptag hi">PWM</span><span class="ptag">Analog</span><span class="ptag">Serial</span></div>
+          <div class="proj-expand-hint"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 8h12M9 3l5 5-5 5"/></svg>Visit Project Site ↗</div>
         </div>
       </div>
     </div>
@@ -1219,7 +1279,7 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
       <div>
         <p class="contact-intro">Embedded Software Engineer II at Visteon Corporation. Firmware running in <strong>Mahindra &amp; Tata Motors</strong> production vehicles. Products showcased at <strong>CES 2026, Las Vegas</strong>. Open to senior embedded and automotive semiconductor roles.</p>
         <div class="contact-links">
-          <a href="mailto:senthil3112000@gmail.com" class="clink"><span class="clink-tag">EMAIL</span><div><div class="clink-text">senthil3112000@gmail.com</div><div class="clink-sub">Best way to reach me</div></div></a>
+          <a href="/cdn-cgi/l/email-protection#c5b6a0abb1adaca9f6f4f4f7f5f5f585a2a8a4aca9eba6aaa8" class="clink"><span class="clink-tag">EMAIL</span><div><div class="clink-text"><span class="__cf_email__" data-cfemail="d2a1b7bca6babbbee1e3e3e0e2e2e292b5bfb3bbbefcb1bdbf">[email&#160;protected]</span></div><div class="clink-sub">Best way to reach me</div></div></a>
           <a href="https://www.linkedin.com/in/senthil-vel/" target="_blank" class="clink"><span class="clink-tag">LINKEDIN</span><div><div class="clink-text">linkedin.com/in/senthil-vel</div><div class="clink-sub">Professional profile</div></div></a>
           <a href="https://github.com/senthilvel-k" target="_blank" class="clink"><span class="clink-tag">GITHUB</span><div><div class="clink-text">github.com/senthilvel-k</div><div class="clink-sub">Projects &amp; repos</div></div></a>
           <a href="https://github.com/senthilvel-k/senthilvel-k.github.io/blob/main/Senthil_Vel_K_Resume.pdf" target="_blank" class="clink"><span class="clink-tag">RESUME</span><div><div class="clink-text">Download PDF ↗</div><div class="clink-sub">Latest version on GitHub</div></div></a>
@@ -1247,7 +1307,7 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
       <div class="footer-links">
         <a href="https://github.com/senthilvel-k" target="_blank">GitHub</a>
         <a href="https://www.linkedin.com/in/senthil-vel/" target="_blank">LinkedIn</a>
-        <a href="mailto:senthil3112000@gmail.com">Email</a>
+        <a href="/cdn-cgi/l/email-protection#1063757e6478797c2321212220202050777d71797c3e737f7d">Email</a>
         <a href="https://github.com/senthilvel-k/senthilvel-k.github.io/blob/main/Senthil_Vel_K_Resume.pdf" target="_blank">Resume</a>
       </div>
     </div>
@@ -1257,7 +1317,7 @@ footer{background:var(--dark);border-top:1px solid var(--border-d);padding:2rem 
 <!-- ════════════════════════════════════════
      LOADER SCRIPT — standalone, runs first
 ════════════════════════════════════════ -->
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 (function loaderInit() {
   var LOGS = [
     { c:'log-info', t:'[RESET] Initialising ECU hardware...' },
@@ -2309,6 +2369,44 @@ document.querySelectorAll('.ask-q').forEach(btn => {
 });
 
 })(); // end IIFE
+</script>
+
+<script>
+function activatePicoTab() {
+  // Scroll to projects section
+  var sec = document.getElementById('projects');
+  if (sec) {
+    var top = sec.getBoundingClientRect().top + window.scrollY - 62;
+    window.scrollTo({ top: top, behavior: 'smooth' });
+  }
+  setTimeout(function() {
+    // Switch tab
+    document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+    var btn = document.querySelector('[data-tab="pico"]');
+    var panel = document.getElementById('tab-pico');
+    if (btn) btn.classList.add('active');
+    if (panel) {
+      panel.classList.add('active');
+      panel.querySelectorAll('.s-left,.s-right,.s-up').forEach(function(el){
+        el.classList.remove('in');
+        setTimeout(function(){ el.classList.add('in'); }, 60);
+      });
+    }
+    // Set Learning Series as active nav item, clear Projects
+    document.querySelectorAll('.nav-links a').forEach(function(a){
+      a.classList.remove('active');
+    });
+    var lsLink = document.querySelector('.nav-links a[href="#pico-series"]');
+    if (lsLink) lsLink.classList.add('active');
+    // Close mobile menu
+    var ham = document.getElementById('navHam');
+    var mob = document.getElementById('navMobile');
+    if (ham) ham.classList.remove('open');
+    if (mob) mob.classList.remove('open');
+    document.body.style.overflow = '';
+  }, 350);
+}
 </script>
 </body>
 </html>
